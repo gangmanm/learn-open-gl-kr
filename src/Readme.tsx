@@ -7,7 +7,8 @@ import FunctionDoc from './components/FunctionDoc';
 import CodeBlock from './components/CodeBlock';
 import WarningBlock from './components/WarningBlock';
 import InfoBlock from './components/InfoBlock';
-
+import { LinkBlock } from './components/LinkBlock';
+import List from './components/List';
 const Wrapper = styled.div`
   max-width: 700px;
   margin: 2rem auto;
@@ -22,6 +23,8 @@ const components = {
   Func: FunctionDoc,
   Warning: WarningBlock,
   Info: InfoBlock,
+  LinkBlock: LinkBlock,
+  List: List,
   p: (props: any) => <div {...props} style={{ margin: '1em 0' }} />,
   pre: (props: any) => <div {...props} />,
   code: (props: any) => {

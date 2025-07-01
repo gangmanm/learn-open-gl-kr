@@ -5,6 +5,7 @@ const Container = styled.span`
   position: relative;
   display: inline-block;
   margin: 0 4px;
+  border-bottom: 1px solid #91caff;
 `;
 
 const Title = styled.span`

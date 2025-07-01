@@ -162,11 +162,11 @@ interface SidebarNavProps {
 const DOCS: NavItemType[] = [
   { label: '소개', value: 'introduction' },
   {
-    label: '예제',
-    value: 'EX',
+    label: '시작하기',
+    value: 'getting-started',
     children: [
-      { label: '예제1', value: 'EX1' },
-      { label: '예제2', value: 'EX2' },
+      { label: 'OpenGL이란', value: 'opengl' },
+      { label: 'OpenGL 튜토리얼', value: 'opengl_tutorial' },
     ],
   },
 ];
