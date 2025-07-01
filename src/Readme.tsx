@@ -13,6 +13,7 @@ const Wrapper = styled.div`
   max-width: 700px;
   margin: 2rem auto;
   line-height: 1.7;
+  margin-bottom: 150px;
 `;
 
 interface ReadmeProps {

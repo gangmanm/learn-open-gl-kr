@@ -29,6 +29,7 @@ const Main = styled.div`
     width: 100vw;
     min-height: 100vh;
     height: 100vh;
+    margin-bottom: 100px;
   }
 `;
 const MobileHeader = styled.div`
