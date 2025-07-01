@@ -17,6 +17,7 @@ const Layout = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     height: 100vh;
+    overflow-y: hidden;
   }
 `;
 const Main = styled.div`
