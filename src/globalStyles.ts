@@ -65,7 +65,6 @@ const GlobalStyle = createGlobalStyle`
 	src: local('Pretendard Thin'), url(./woff2/Pretendard-Thin.woff2) format('woff2'), url(./woff/Pretendard-Thin.woff) format('woff');
 }
 
-
   * {
     margin: 0;
     padding: 0;
@@ -75,10 +74,43 @@ const GlobalStyle = createGlobalStyle`
   html, body {
     height: 100%;
     font-family: 'Paperlogy', 'Inter', 'Pretendard', 'Segoe UI', Arial, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   #root {
     height: 100%;
+  }
+
+  /* 다크모드 전환 시 부드러운 애니메이션 */
+  * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+
+  /* 스크롤바 스타일링 */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* 다크모드에서 스크롤바 */
+  [data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
   }
 `;
 
