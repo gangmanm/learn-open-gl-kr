@@ -14,10 +14,13 @@ const Layout = styled.div`
   padding: 0;
   background-color: #f0f0f0;
   font-family: 'Pretendard';
+  position: fixed;
+  top: 0;
+  left: 0;
   @media (max-width: 768px) {
     flex-direction: column;
     height: 100vh;
-    overflow-y: hidden;
+    overflow: hidden;
   }
 `;
 const Main = styled.div`
