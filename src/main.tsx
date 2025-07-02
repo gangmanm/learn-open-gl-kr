@@ -2,13 +2,23 @@ import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import GlobalStyle from './globalStyles.ts'
-import { ThemeProvider } from './contexts/ThemeContext'
+import { ThemeProvider as CustomThemeProvider, useTheme } from './contexts/ThemeContext'
+import { ThemeProvider as StyledThemeProvider } from 'styled-components'
+
+const Root = () => {
+  const { theme } = useTheme();
+  return (
+    <StyledThemeProvider theme={theme}>
+      <GlobalStyle />
+      <App />
+    </StyledThemeProvider>
+  );
+};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider>
-      <GlobalStyle />
-      <App />
-    </ThemeProvider>
+    <CustomThemeProvider>
+      <Root />
+    </CustomThemeProvider>
   </StrictMode>,
 )
