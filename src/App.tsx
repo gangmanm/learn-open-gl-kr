@@ -55,8 +55,8 @@ const MobileHeader = styled.div<{ theme: any }>`
     justify-content: space-between;
     width: 100%;
     height: 48px;
-    background: #fff;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid ${props => props.theme.colors.border};
+    background: ${props => props.theme.colors.background};
     position: fixed;
     top: 0;
     z-index: 200;
@@ -73,10 +73,11 @@ const Title = styled.div<{ theme: any }>`
   transition: color 0.3s ease;
 `;
 
-const HeaderControls = styled.div`
+const HeaderControls = styled.div<{ theme: any }>`
   display: flex;
   align-items: center;
   gap: 1rem;
+  color: ${props => props.theme.colors.primary};
 `;
 
 const DOC_MAP: Record<string, string> = {
@@ -124,7 +125,7 @@ function App() {
     <Layout theme={theme}>
       <MobileHeader theme={theme}>
         <HeaderControls>
-          <FiMenu onClick={() => setSidebarOpen((v) => !v)} style={{color: theme.colors.primary, fontSize: '2rem'}}/>
+          <FiMenu onClick={() => setSidebarOpen((v) => !v)} style={{fontSize: '2rem', color: theme.colors.primary}}/>
           <ThemeToggle />
         </HeaderControls>
         <Title theme={theme}>OpenGL 배우기</Title>
