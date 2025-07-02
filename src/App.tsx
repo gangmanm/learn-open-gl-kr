@@ -14,21 +14,27 @@ const Layout = styled.div`
   padding: 0;
   background-color: #f0f0f0;
   font-family: 'Pretendard';
+  position: fixed;
+  top: 0;
+  left: 0;
   @media (max-width: 768px) {
     flex-direction: column;
     height: 100vh;
+    overflow: hidden;
   }
 `;
 const Main = styled.div`
   width: 100%;
   height: 100%;
-  overflow-y: auto;
   background-color:rgb(255, 255, 255);
+      overflow-y: auto;
   @media (max-width: 768px) {
     padding: 2rem 2rem;
     width: 100vw;
     min-height: 100vh;
     height: 100vh;
+
+    padding-bottom: 100px;
   }
 `;
 const MobileHeader = styled.div`
@@ -42,7 +48,7 @@ const MobileHeader = styled.div`
     height: 48px;
     background: #fff;
     border-bottom: 1px solid #e5e5e5;
-    position: sticky;
+    position: fixed;
     top: 0;
     z-index: 200;
     align-items: center;

@@ -75,7 +75,9 @@ const GlobalStyle = createGlobalStyle`
   html, body {
     height: 100%;
     font-family: 'Paperlogy', 'Inter', 'Pretendard', 'Segoe UI', Arial, sans-serif;
-  }
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow: hidden;
+	}
 
   #root {
     height: 100%;
