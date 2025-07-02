@@ -9,49 +9,55 @@ import WarningBlock from './components/WarningBlock';
 import InfoBlock from './components/InfoBlock';
 import { LinkBlock } from './components/LinkBlock';
 import List from './components/List';
-const Wrapper = styled.div`
+import { useTheme } from './contexts/ThemeContext';
+
+const Wrapper = styled.div<{ theme: any }>`
   max-width: 700px;
   margin: 2rem auto;
   line-height: 1.7;
+  margin-bottom: 150px;
+  color: ${props => props.theme.colors.text};
+  transition: color 0.3s ease;
 `;
 
 interface ReadmeProps {
   doc?: string;
 }
 
-const components = { 
-  Func: FunctionDoc,
-  Warning: WarningBlock,
-  Info: InfoBlock,
-  LinkBlock: LinkBlock,
-  List: List,
-  p: (props: any) => <div {...props} style={{ margin: '1em 0' }} />,
-  pre: (props: any) => <div {...props} />,
-  code: (props: any) => {
-    const isInline = !props.className;
-    if (isInline) {
-      return (
-        <code 
-          {...props} 
-          style={{
-            background: '#f1f3f4',
-            padding: '2px 6px',
-            borderRadius: '4px',
-            fontFamily: 'monospace',
-            fontSize: '0.9em',
-            color: '#d73a49'
-          }}
-        />
-      );
-    }
-    return <CodeBlock {...props} />;
-  }
-};
-
 const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
+  const { theme } = useTheme();
   const [content, setContent] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [MDXComponent, setMDXComponent] = useState<React.ComponentType | null>(null);
+
+  const components = { 
+    Func: FunctionDoc,
+    Warning: WarningBlock,
+    Info: InfoBlock,
+    LinkBlock: LinkBlock,
+    List: List,
+    p: (props: any) => <div {...props} style={{ margin: '1em 0' }} />,
+    pre: (props: any) => <div {...props} />,
+    code: (props: any) => {
+      const isInline = !props.className;
+      if (isInline) {
+        return (
+          <code 
+            {...props} 
+            style={{
+              background: theme.colors.code.background,
+              padding: '2px 6px',
+              borderRadius: '4px',
+              fontFamily: 'monospace',
+              fontSize: '0.9em',
+              color: theme.colors.code.text
+            }}
+          />
+        );
+      }
+      return <CodeBlock {...props} />;
+    }
+  };
 
   useEffect(() => {
     setContent('');
@@ -83,11 +89,11 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     return () => { cancelled = true; };
   }, [content]);
 
-  if (error) return <Wrapper style={{ color: 'red' }}>{error}</Wrapper>;
-  if (!content || !MDXComponent) return <Wrapper>로딩 중...</Wrapper>;
+  if (error) return <Wrapper theme={theme} style={{ color: 'red' }}>{error}</Wrapper>;
+  if (!content || !MDXComponent) return <Wrapper theme={theme}>로딩 중...</Wrapper>;
 
   return (
-    <Wrapper>
+    <Wrapper theme={theme}>
       <MDXProvider components={components}>
         <MDXComponent />
       </MDXProvider>

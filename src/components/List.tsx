@@ -64,7 +64,7 @@ function List({
             : ordered
               ? <span style={{color:'#6366f1', fontWeight:600, minWidth:24}}>{idx+1}.</span>
               : <FiCheckCircle style={{color:'#6366f1', minWidth:24}} />}
-          <span>{renderItem ? renderItem(item, idx) : item}</span>
+          <span style={{color:'#333'}}>{renderItem ? renderItem(item, idx) : item}</span>
         </ListItem>
       ))}
     </ListTag>

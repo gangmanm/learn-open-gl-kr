@@ -2,35 +2,40 @@ import React from 'react';
 import styled from 'styled-components';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { useTheme } from '../contexts/ThemeContext';
 
-const CodeContainer = styled.div`
-  background: #1e1e1e;
+const CodeContainer = styled.div<{ theme: any }>`
+  background: ${props => props.theme.colors.code.background};
   border-radius: 8px;
   margin: 1rem 0;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid ${props => props.theme.colors.border};
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 `;
 
-const CodeHeader = styled.div`
-  background: #2d2d2d;
+const CodeHeader = styled.div<{ theme: any }>`
+  background: ${props => props.theme.mode === 'dark' ? '#2d2d2d' : '#f8f9fa'};
   padding: 8px 16px;
-  border-bottom: 1px solid #404040;
+  border-bottom: 1px solid ${props => props.theme.colors.border};
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 `;
 
-const LanguageLabel = styled.span`
-  color: #e0e0e0;
+const LanguageLabel = styled.span<{ theme: any }>`
+  color: ${props => props.theme.colors.textSecondary};
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  transition: color 0.3s ease;
 `;
 
-const CopyButton = styled.button`
-  background: #404040;
-  color: #e0e0e0;
+const CopyButton = styled.button<{ theme: any }>`
+  background: ${props => props.theme.mode === 'dark' ? '#404040' : '#e9ecef'};
+  color: ${props => props.theme.colors.textSecondary};
   border: none;
   padding: 4px 8px;
   border-radius: 4px;
@@ -39,8 +44,8 @@ const CopyButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background: #505050;
-    color: #fff;
+    background: ${props => props.theme.mode === 'dark' ? '#505050' : '#dee2e6'};
+    color: ${props => props.theme.colors.text};
   }
 `;
 
@@ -50,6 +55,8 @@ interface CodeBlockProps {
 }
 
 const CodeBlock: React.FC<CodeBlockProps> = ({ children, className }) => {
+  const { theme } = useTheme();
+  
   // 언어 추출 (className에서)
   const language = className ? className.replace('language-', '') : '';
   
@@ -62,20 +69,22 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ children, className }) => {
   };
 
   return (
-    <CodeContainer>
-      <CodeHeader>
-        <LanguageLabel>{language || 'text'}</LanguageLabel>
-        <CopyButton onClick={handleCopy}>복사</CopyButton>
+    <CodeContainer theme={theme}>
+      <CodeHeader theme={theme}>
+        <LanguageLabel theme={theme}>{language || 'text'}</LanguageLabel>
+        <CopyButton onClick={handleCopy} theme={theme}>복사</CopyButton>
       </CodeHeader>
       <SyntaxHighlighter
         language={language}
-        style={oneDark}
+        style={theme.mode === 'dark' ? oneDark : undefined}
         customStyle={{
           margin: 0,
           borderRadius: 0,
           fontSize: '14px',
           lineHeight: '1.5',
-          fontFamily: "'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace"
+          fontFamily: "'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace",
+          background: theme.colors.code.background,
+          color: theme.colors.code.text
         }}
         showLineNumbers={true}
         wrapLines={true}
