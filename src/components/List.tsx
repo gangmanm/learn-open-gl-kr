@@ -5,10 +5,7 @@ import { FiCheckCircle } from 'react-icons/fi';
 const baseListStyle = css`
   padding-left: 0;
   margin: 1rem 0;
-  border-radius: 12px;
-  background: #f8fafc;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  border: 1px solid rgb(44, 75, 136);
+  border: 1px solid rgb(110, 111, 111);
 `;
 
 const StyledUl = styled.ul`
@@ -27,8 +24,9 @@ const ListItem = styled.li<{compact?: boolean}>`
   gap: 0.75rem;
   padding: ${({compact}) => compact ? '0.4rem 1.2rem' : '0.8rem 1.5rem'};
   font-size: ${({compact}) => compact ? '1rem' : '1.08rem'};
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgb(110, 111, 111);
   transition: background 0.15s;
+
   &:last-child {
     border-bottom: none;
   }

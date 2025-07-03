@@ -191,7 +191,7 @@ const DOCS: NavItemType[] = [
     value: 'getting-started',
     children: [
       { label: 'OpenGL이란', value: 'opengl' },
-      { label: 'OpenGL 튜토리얼', value: 'opengl_tutorial' },
+      { label: '윈도우 창 만들기', value: 'creatingawindow' },
     ],
   },
 ];

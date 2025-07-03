@@ -10,7 +10,7 @@ import InfoBlock from './components/InfoBlock';
 import { LinkBlock } from './components/LinkBlock';
 import List from './components/List';
 import { useTheme } from './contexts/ThemeContext';
-
+import { DirectoryStructure } from './components/DirectoryStructure';
 const Wrapper = styled.div<{ theme: any }>`
   max-width: 700px;
   margin: 2rem auto;
@@ -36,6 +36,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     Info: InfoBlock,
     LinkBlock: LinkBlock,
     List: List,
+    DirectoryStructure: DirectoryStructure,
     p: (props: any) => <div {...props} style={{ margin: '1em 0' }} />,
     pre: (props: any) => <div {...props} />,
     code: (props: any) => {
