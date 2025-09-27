@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import styled, { css } from 'styled-components';
-import { FiX, FiXCircle } from 'react-icons/fi';
+import styled from 'styled-components';
+import { FiXCircle } from 'react-icons/fi';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
 
 const Sidebar = styled.nav<{ isOpen?: boolean; theme: any }>`
   width: 300px;
@@ -257,7 +258,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ selected, onSelect, isOpen, onC
         
         {/* PC용 헤더 */}
         <SidebarHeader theme={theme}>
-          <Title theme={theme}>OpenGL 배우기</Title>
+          <Logo size="small" />
           <ThemeToggle />
         </SidebarHeader>
         
