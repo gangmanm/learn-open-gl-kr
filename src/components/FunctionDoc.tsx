@@ -5,18 +5,18 @@ const Container = styled.span`
   position: relative;
   display: inline-block;
   margin: 0 4px;
-  border-bottom: 1px solid #91caff;
+  border-bottom: 1px solid #ef4444;
 `;
 
 const Title = styled.span`
   font-weight: 700;
-  font-size: 18px;
+  font-size: inherit;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
   transition: all 0.2s ease;
   border: 1px solid transparent;
-  color: #1677ff;
+  color: #ef4444;
 
   ${Container}:hover & {
     background: #e6f7ff;
@@ -114,22 +114,26 @@ const FunctionDoc: React.FC<FunctionDocProps> = ({ name, params, description, ex
 
   if (typeof params === 'string') {
     try {
-      parsedParams = JSON.parse(params);
+      parsedParams = JSON.parse(params) || [];
     } catch {
       parsedParams = [];
     }
-  } else {
+  } else if (Array.isArray(params)) {
     parsedParams = params;
+  } else {
+    parsedParams = [];
   }
 
   if (typeof tags === 'string') {
     try {
-      parsedTags = JSON.parse(tags);
+      parsedTags = JSON.parse(tags) || [];
     } catch {
       parsedTags = [];
     }
   } else if (Array.isArray(tags)) {
     parsedTags = tags;
+  } else {
+    parsedTags = [];
   }
 
   return (

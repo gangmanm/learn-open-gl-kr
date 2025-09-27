@@ -18,12 +18,12 @@ const StyledOl = styled.ol`
   list-style: none;
 `;
 
-const ListItem = styled.li<{compact?: boolean}>`
+const ListItem = styled.li<{$compact?: boolean}>`
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  padding: ${({compact}) => compact ? '0.4rem 1.2rem' : '0.8rem 1.5rem'};
-  font-size: ${({compact}) => compact ? '1rem' : '1.08rem'};
+  padding: ${({$compact}) => $compact ? '0.4rem 1.2rem' : '0.8rem 1.5rem'};
+  font-size: ${({$compact}) => $compact ? '1rem' : '1.08rem'};
   border-bottom: 1px solid rgb(110, 111, 111);
   transition: background 0.15s;
 
@@ -56,7 +56,7 @@ function List({
   return (
     <ListTag className={className}>
       {items.map((item, idx) => (
-        <ListItem key={idx} compact={compact}>
+        <ListItem key={idx} $compact={compact}>
           {icon !== undefined
             ? icon
             : ordered
