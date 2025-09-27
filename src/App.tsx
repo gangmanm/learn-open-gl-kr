@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Readme from './Readme';
 import SidebarNav from './components/SidebarNav';
 import ThemeToggle from './components/ThemeToggle';
+import Logo from './components/Logo';
 import { FiMenu } from 'react-icons/fi';
 import { useTheme } from './contexts/ThemeContext';
 
@@ -65,13 +66,6 @@ const MobileHeader = styled.div<{ theme: any }>`
   }
 `;
 
-const Title = styled.div<{ theme: any }>`
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: ${props => props.theme.colors.primary};
-  margin-left: 1.5rem;
-  transition: color 0.3s ease;
-`;
 
 const HeaderControls = styled.div<{ theme: any }>`
   display: flex;
@@ -129,7 +123,7 @@ function App() {
           <FiMenu onClick={() => setSidebarOpen((v) => !v)} style={{fontSize: '2rem', color: theme.colors.primary}}/>
           <ThemeToggle />
         </HeaderControls>
-        <Title theme={theme}>OpenGL 배우기</Title>
+        <Logo size="small" showSubtext={false} />
       </MobileHeader>
       <SidebarNav selected={selected} onSelect={handleSelect} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Main theme={theme}>
