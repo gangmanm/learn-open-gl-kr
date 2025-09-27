@@ -39,6 +39,21 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     DirectoryStructure: DirectoryStructure,
     p: (props: any) => <div {...props} style={{ margin: '1em 0' }} />,
     pre: (props: any) => <div {...props} />,
+    img: (props: any) => (
+      <img 
+        {...props} 
+        style={{
+          maxWidth: '100%',
+          height: 'auto',
+          display: 'block',
+          margin: '1.5em auto',
+          borderRadius: '8px',
+          boxShadow: `0 4px 12px ${theme.colors.shadow || 'rgba(0,0,0,0.1)'}`,
+          border: `1px solid ${theme.colors.border}`,
+          ...props.style
+        }}
+      />
+    ),
     code: (props: any) => {
       const isInline = !props.className;
       if (isInline) {

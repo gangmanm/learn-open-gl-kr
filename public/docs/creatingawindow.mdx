@@ -27,7 +27,7 @@ GLFW는 화면에 그래픽을 렌더링 하는데 필요한 기본적인 필수
 
 <List items={["GLFW를 정상적으로 설치 및 실행 하는 것", "OpenGL 컨텍스트를 제대로 생성하고", "간단한 윈도우를 화면에 띄워 테스트 할 수 있게 만드는 것"]} ordered={true} />
 
-이 장에서는 GLFW 라이브러리를 @bold[다운로드 → 빌드 → 프로젝트에 연결(linking)]하는 과정을
+이 장에서는 GLFW 라이브러리를 **다운로드 → 빌드 → 프로젝트에 연결(linking)** 하는 과정을
 단계별로 자세히 설명합니다.
 
 우리는 현재 시점 기준으로 Microsoft Visual Studio 2019 IDE를 사용합니다.
@@ -69,3 +69,31 @@ Source Package 를 다운로드 한 후에는 압축을 풀고 그 안의 내용
 CMake는 다양한 플랫폼과 IDE에서 사용할 수 있도록,
 공통된 방식으로 빌드 설정을 정의하고,
 그 설정을 기반으로 각 IDE/플랫폼에 맞는 프로젝트 파일을 자동으로 생성해줍니다
+
+
+## CMake
+
+CMake는 유저의 입맛에 맞게 project/solution을 생성할 수 있는 툴 입니다. (예. Visual studio, Code::Blocks, Eclips) 미리 정의된 CMake 스크립트를 사용하여 
+여러 소스 코드 파일에서 생성해줍니다. 이를 통해 우리는 GLFW의 소스 패키지로부터 Visual Studio 프로젝트 파일을 생성할 수 있고, 그 프로젝트 파일을 이용해 라이브러리를 컴파일 할수 있습니다. 
+
+먼저 CMake를 다운로드하고 설치해야합니다. CMake는 자체적인 <LinkBlock url={"https://cmake.org/download/"} text="CMake 다운로드 웹사이트"/> 에서 받을 수 있습니다. 
+
+CMake를 설치한 후에는 command line 혹은 GUI를 통해 실행할 수 있습니다. 복잡하게 하지 않기 위해 여기서는 GUI를 사용하도록 합시다. 
+
+CMake는 소스코드 폴더와 바이너리 빌드용 폴더를 필요로 합니다. 
+- 소스 코드 폴더 : 다운로드한 GLFW 소스 패키지의 루트 폴더를 선택
+- 빌드 폴더 : build라는 새 폴더를 만들어 그 폴더를 선택합니다. 
+
+![CMake](./images/getting-started/cmake.png)
+
+소스코더 폴더와 빌드 폴더가 세팅된 후에는 **Configure** 버튼을 클릭해서 CMake가 필요한 설정과 소스 코드들을 읽을 수 있도록 합니다. 
+그 후 우리는 프로젝트의 생성자를 선택해야합니다. 현재 Visual Studio 2019를 사용하고 있으니 Visual Studio 16 옵션을 선택할 것입니다. 
+(Visual Studio 2019는 Visual Studio 16으로도 알려져 있습니다.) CMake는 그 후 가능한 빌드 옵션들을 보여줍니다. 
+기본값은 그대로 두고 다시 **Configure** 버튼을 눌러 설정을 저장하면 됩니다. 
+설정이 완료되면 **Generate** 버튼을 눌러 프로젝트 파일을 빌드 폴더 안에 생성합니다. 
+
+## 컴파일 (Compilation)
+
+빌드 폴더 안에는 이제 **GLFW.sln** 이라는 파일이 생성되어 있을 것이고, 이를 Visual Studio 2019 (혹은 2022) 로 열 수 있습니다. 
+CMake가 이미 적절한 설정을 포함한 프로젝트 파일을 생성했기 때문에, 우리는 단순히 솔루션을 빌드 하기만 하면 됩니다. 
+
