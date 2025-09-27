@@ -39,6 +39,70 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     DirectoryStructure: DirectoryStructure,
     p: (props: any) => <div {...props} style={{ margin: '1em 0' }} />,
     pre: (props: any) => <div {...props} />,
+    ul: (props: any) => (
+      <ul 
+        {...props} 
+        style={{
+          listStyle: 'none',
+          padding: '0 0 0 1.5rem',
+          margin: '1em 0',
+          color: theme.colors.text,
+          ...props.style
+        }}
+      />
+    ),
+    li: (props: any) => (
+      <li 
+        {...props} 
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.5rem',
+          padding: '0.5rem 0.75rem',
+          fontSize: '1rem',
+          lineHeight: '1.6',
+          color: theme.colors.text + ' !important',
+          borderRadius: '6px',
+          margin: '0.2rem 0',
+          transition: 'all 0.2s ease',
+          cursor: 'pointer',
+          ...props.style
+        }}
+        onMouseEnter={(e: any) => {
+          e.target.style.backgroundColor = theme.mode === 'dark' ? '#1a365d' : '#e3f2fd';
+          e.target.style.transform = 'translateX(4px)';
+        }}
+        onMouseLeave={(e: any) => {
+          e.target.style.backgroundColor = 'transparent';
+          e.target.style.transform = 'translateX(0px)';
+        }}
+      >
+        <span style={{
+          color: theme.colors.primary,
+          fontWeight: '600',
+          minWidth: '16px',
+          fontSize: '1rem',
+          marginTop: '1px'
+        }}>
+          -
+        </span>
+         <span style={{ 
+           flex: 1,
+           color: theme.mode === 'dark' ? '#4096ff !important' : theme.colors.text + ' !important',
+           fontWeight: theme.mode === 'dark' ? '600' : 'normal',
+           // 추가 스타일로 강제 적용
+           WebkitTextFillColor: theme.mode === 'dark' ? '#4096ff' : theme.colors.text,
+           textShadow: 'none'
+         }}>
+           <div style={{ 
+             color: theme.mode === 'dark' ? '#4096ff !important' : theme.colors.text + ' !important',
+             fontWeight: theme.mode === 'dark' ? '600' : 'normal'
+           }}>
+             {props.children}
+           </div>
+         </span>
+      </li>
+    ),
     img: (props: any) => (
       <img 
         {...props} 

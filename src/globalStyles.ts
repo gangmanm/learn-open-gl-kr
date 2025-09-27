@@ -113,6 +113,35 @@ const GlobalStyle = createGlobalStyle`
   [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
   }
+
+  /* 다크모드에서 리스트 텍스트 색상 강제 적용 */
+  [data-theme="dark"] ul li,
+  [data-theme="dark"] ul li *,
+  [data-theme="dark"] ol li,
+  [data-theme="dark"] ol li * {
+    color: #4096ff !important;
+    font-weight: 600 !important;
+  }
+
+  /* 라이트모드에서 리스트 텍스트 색상 */
+  [data-theme="light"] ul li,
+  [data-theme="light"] ul li *,
+  [data-theme="light"] ol li,
+  [data-theme="light"] ol li * {
+    color: #333333 !important;
+  }
+
+  /* 다크모드에서 리스트 호버 효과 */
+  [data-theme="dark"] ul li:hover {
+    background-color: #1a365d !important;
+    transform: translateX(4px);
+  }
+
+  /* 라이트모드에서 리스트 호버 효과 */
+  [data-theme="light"] ul li:hover {
+    background-color: #e3f2fd !important;
+    transform: translateX(4px);
+  }
 `;
 
 export default GlobalStyle;
