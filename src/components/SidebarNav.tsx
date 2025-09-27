@@ -88,40 +88,40 @@ const NavList = styled.ul`
 `;
 
 const NavItem = styled.li<{
-  selected: boolean;
-  depth?: number;
-  isParent?: boolean;
-  isOpen?: boolean;
+  $selected: boolean;
+  $depth?: number;
+  $isParent?: boolean;
+  $isOpen?: boolean;
   theme: any;
 }>`
   margin-bottom: 0.6rem;
   border: 1px solid ${props => props.theme.colors.border};
   padding: 0.5rem 1rem;
-  color: ${({ selected, theme }) => (selected ? theme.colors.primary : theme.colors.sidebar.text)};
-  font-weight: ${({ selected, isParent }) => (selected || isParent ? 600 : 400)};
-  cursor: ${({ isParent }) => (isParent ? 'pointer' : 'pointer')};
-  margin-left: ${({ depth }) => (depth === 1 ? '2.1em' : 0)};
+  color: ${({ $selected, theme }) => ($selected ? theme.colors.primary : theme.colors.sidebar.text)};
+  font-weight: ${({ $selected, $isParent }) => ($selected || $isParent ? 600 : 400)};
+  cursor: ${({ $isParent }) => ($isParent ? 'pointer' : 'pointer')};
+  margin-left: ${({ $depth }) => ($depth === 1 ? '2.1em' : 0)};
   display: flex;
-  background: ${({ selected, theme }) => (selected ? `linear-gradient(90deg,${theme.colors.primary}15 0%,${theme.colors.primary}08 100%)` : 'transparent')};
+  background: ${({ $selected, theme }) => ($selected ? `linear-gradient(90deg,${theme.colors.primary}15 0%,${theme.colors.primary}08 100%)` : 'transparent')};
   border-radius: 9px;
   transition: background 0.22s, color 0.18s, box-shadow 0.18s, border-color 0.3s ease;
   position: relative;
-  box-shadow: ${({ selected, theme }) => (selected ? `0 2px 12px 0 ${theme.colors.primary}15` : 'none')};
+  box-shadow: ${({ $selected, theme }) => ($selected ? `0 2px 12px 0 ${theme.colors.primary}15` : 'none')};
   z-index: 1;
   letter-spacing: -0.01em;
 
   &:hover {
     color: ${props => props.theme.colors.primary};
-    background: ${({ selected, theme }) => (selected ? `linear-gradient(90deg,${theme.colors.primary}20 0%,${theme.colors.primary}12 100%)` : `${theme.colors.primary}10`)};
+    background: ${({ $selected, theme }) => ($selected ? `linear-gradient(90deg,${theme.colors.primary}20 0%,${theme.colors.primary}12 100%)` : `${theme.colors.primary}10`)};
     box-shadow: 0 2px 16px 0 ${props => props.theme.colors.primary}15;
   }
 `;
 
-const Arrow = styled.span<{ isOpen: boolean; theme: any }>`
+const Arrow = styled.span<{ $isOpen: boolean; theme: any }>`
   position: absolute;
   right: 1.1em;
   top: 50%;
-  transform: translateY(-50%) rotate(${props => (props.isOpen ? 45 : -45)}deg) scale(${props => (props.isOpen ? 1.2 : 1)});
+  transform: translateY(-50%) rotate(${props => (props.$isOpen ? 45 : -45)}deg) scale(${props => (props.$isOpen ? 1.2 : 1)});
   width: 0.55em;
   height: 0.55em;
   border-right: 2.5px solid ${props => props.theme.colors.primary};
@@ -133,8 +133,8 @@ const Arrow = styled.span<{ isOpen: boolean; theme: any }>`
   pointer-events: none;
 `;
 
-const Collapse = styled.div<{ isOpen: boolean }>`
-  max-height: ${({ isOpen }) => (isOpen ? '500px' : '0')};
+const Collapse = styled.div<{ $isOpen: boolean }>`
+  max-height: ${({ $isOpen }) => ($isOpen ? '500px' : '0')};
   overflow: hidden;
   transition: max-height 0.38s cubic-bezier(.4,2,.6,1);
 `;
@@ -192,6 +192,7 @@ const DOCS: NavItemType[] = [
     children: [
       { label: 'OpenGL이란', value: 'opengl' },
       { label: '윈도우 창 만들기', value: 'creatingawindow' },
+      { label: 'Hello Window', value: 'hellowindow' },
     ],
   },
 ];
@@ -216,21 +217,21 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ selected, onSelect, isOpen, onC
       return (
         <React.Fragment key={item.value}>
           <NavItem
-            selected={selected === item.value}
+            $selected={selected === item.value}
             onClick={() =>
               isParent ? handleParentClick(item.value) : onSelect(item.value)
             }
-            depth={depth}
-            isParent={isParent}
-            isOpen={isOpen}
+            $depth={depth}
+            $isParent={isParent}
+            $isOpen={isOpen}
             style={isParent ? { userSelect: 'none' } : {}}
             theme={theme}
           >
             {item.label}
-            {isParent && <Arrow isOpen={isOpen} theme={theme} />}
+            {isParent && <Arrow $isOpen={isOpen} theme={theme} />}
           </NavItem>
           {isParent && (
-            <Collapse isOpen={isOpen}>
+            <Collapse $isOpen={isOpen}>
               <NavList>
                 {renderNav(item.children!, selected, onSelect, depth + 1)}
               </NavList>
