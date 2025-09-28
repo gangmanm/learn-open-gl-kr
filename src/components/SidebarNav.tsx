@@ -194,6 +194,7 @@ const DOCS: NavItemType[] = [
       { label: 'OpenGL이란', value: 'opengl' },
       { label: '윈도우 창 만들기', value: 'creatingawindow' },
       { label: 'Hello Window', value: 'hellowindow' },
+      { label: 'Hello Triangle', value: 'hellotriangle' },
     ],
   },
 ];

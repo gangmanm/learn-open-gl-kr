@@ -80,7 +80,7 @@ const DOC_MAP: Record<string, string> = {
   opengl_tutorial: 'opengl_tutorial',
   creatingawindow: 'creatingawindow',
   hellowindow: 'HelloWindow',
-  opengl_tutorial_3: 'opengl_tutorial_3',
+  hellotriangle: 'HelloTriangle',
   opengl_tutorial_4: 'opengl_tutorial_4',
   opengl_tutorial_5: 'opengl_tutorial_5',
   opengl_tutorial_6: 'opengl_tutorial_6',
