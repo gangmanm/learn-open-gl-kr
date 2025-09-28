@@ -25,25 +25,28 @@ const Layout = styled.div<{ theme: any }>`
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 `;
 
 const Main = styled.div<{ theme: any }>`
   width: 100%;
   height: 100%;
-  background-color:rgb(255, 255, 255);
-      overflow-y: auto;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: ${props => props.theme.colors.surface};
   color: ${props => props.theme.colors.text};
   transition: background-color 0.3s ease, color 0.3s ease;
   @media (max-width: 768px) {
-    padding: 2rem 2rem;
-    width: 100vw;
+    padding: 1rem;
+    padding-top: 70px;
+    width: 100%;
+    max-width: 100vw;
     min-height: 100vh;
     height: 100vh;
-
     padding-bottom: 50px;
+    box-sizing: border-box;
   }
 `;
 

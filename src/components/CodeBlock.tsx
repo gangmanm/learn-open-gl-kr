@@ -12,6 +12,12 @@ const CodeContainer = styled.div<{ theme: any }>`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 1px solid ${props => props.theme.colors.border};
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  max-width: 100%;
+  
+  @media (max-width: 768px) {
+    margin: 0.5rem 0;
+    border-radius: 6px;
+  }
 `;
 
 const CodeHeader = styled.div<{ theme: any }>`
@@ -84,7 +90,9 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ children, className }) => {
           lineHeight: '1.5',
           fontFamily: "'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace",
           background: theme.colors.code.background,
-          color: theme.colors.code.text
+          color: theme.colors.code.text,
+          maxWidth: '100%',
+          overflowX: 'auto'
         }}
         showLineNumbers={true}
         wrapLines={true}

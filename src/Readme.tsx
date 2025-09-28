@@ -22,6 +22,15 @@ const Wrapper = styled.div<{ theme: any }>`
   margin-bottom: 150px;
   color: ${props => props.theme.colors.text};
   transition: color 0.3s ease;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+    margin: 1rem 0;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+  }
 `;
 
 interface ReadmeProps {
