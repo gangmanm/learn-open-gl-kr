@@ -9,6 +9,8 @@ import WarningBlock from './components/WarningBlock';
 import InfoBlock from './components/InfoBlock';
 import { LinkBlock } from './components/LinkBlock';
 import List from './components/List';
+import NumberedList, { NumberedItem } from './components/NumberedList';
+import TranslatorNote from './components/TranslatorNote';
 import { useTheme } from './contexts/ThemeContext';
 import { DirectoryStructure } from './components/DirectoryStructure';
 import { Red, Green, Blue } from './components/ColorText';
@@ -37,7 +39,10 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     Info: InfoBlock,
     LinkBlock: LinkBlock,
     List: List,
+    NumberedList: NumberedList,
+    NumberedItem: NumberedItem,
     DirectoryStructure: DirectoryStructure,
+    TranslatorNote: TranslatorNote,
     Red: Red,
     Green: Green,
     Blue: Blue,
@@ -116,7 +121,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
           display: 'block',
           margin: '1.5em auto',
           borderRadius: '8px',
-          boxShadow: `0 4px 12px ${theme.colors.shadow || 'rgba(0,0,0,0.1)'}`,
+          boxShadow: `0 4px 12px rgba(0,0,0,0.1)`,
           border: `1px solid ${theme.colors.border}`,
           ...props.style
         }}
