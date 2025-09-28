@@ -283,4 +283,167 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 이제 이 데이터를 실제로 처리할 정점 쉐이더와 프래그먼트 쉐이더를 만들어야 하므로 다음 단계로 넘어가겠습니다. 
 
 ## Vertex shader 
-정점 쉐이더(Vertex Shader)
+정점 쉐이더(Vertex Shader)는 우리 같은 개발자가 직접 프로그래밍할 수 있는 쉐이더 중 하나입니다. 
+현대 OpenGL에서는 렌더링을 하려면 최소한 정점 쉐이더와 프래그먼트 쉐이더를 반드시 설정해야 합니다. 
+따라서 우리는 간단히 쉐이더를 소개하고 첫번째 삼각형을 그리기 위해 아주 간단한 두 개의 쉐이더를 설정해 보겠습니다. 
+쉐이더에 대한 자세한 내용은 다음 장에서 더 깊이 다룰 것입니다. 
+
+우리가 해야할 첫번째 일은 GLSL(OpenGL Shading Language)로 정점 쉐이더를 작성한 뒤 , 이 쉐이더를 컴파일하여 
+애플리케이션에서 사용할 수 있도록 하는 것입니다. 아래에는 GLSL로 작성된 아주 기본적인 정점 쉐이더의 소스코드가 나와 있습니다. 
+
+```cpp
+
+#version 330 core
+layout (location = 0) in vec3 aPos;
+
+void main()
+{
+    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+}
+```
+
+보시다시피 GLSL은 C언어와 유사합니다. 각각의 쉐이더는 버전 선언으로 시작됩니다. 
+OpenGL 3.3 이상부터는 GLSL의 버전 번호가 OpenGL의 버전과 일치합니다. 
+(GLSL 버전 420은 OpenGL 4.2에 해당) 
+우리는 또한 명시적으로 코어 프로파일(core profile)을 사용한다고 선언합니다. 
+
+그 다음, 정점 쉐이더 에서는 `in` 키워드를 사용해 입력 정점 속성(Vertex Attribute)를 선언합니다. 
+지금은 위치 데이터 만 필요하기 대문에 하나의 정점 속성만 있으면 됩니다. GLSL에는 벡터 타입이 있는데 
+이는 접미사의 숫자에 따라 1~4개의 float을 포함할 수 있습니다. 각 정점은 3D 좌표를 가지므로 `vec3` 타입의 
+입력 변수를 aPos라는 이름으로 선언합니다. 또한 `layout(location =0)을 통해 입력 변수의 위치를 명시적으로
+지정하는데, 이후에 이 위치가 왜 필요한지 알아보게 될 것입니다. 
+
+<Info>
+
+### Vector 벡터 
+
+그래픽스 프로그래밍에서 우리는 벡터라는 수학적 개념을 자주 사용합니다. 벡터는 어떤 공간에든 위치나 방향을 
+깔끔하게 표현할 수 있고 유용한 수학적 성질을 가지고 있기 때문입니다. 
+
+GLSL에서 벡터는 최대 크기가 4이며 각각의 값은 `vecx,vec y , vec z, vec w`로 접근할 수 있습니다. 
+이들은 각각 공간상의 좌표를 의미합니다. 다만 `vec.w` 성분은 실제 3D 공간의 좝표로 쓰이지는 않습니다. 
+(우리가 다루는 것은 4차원이 아니라 3차원이기 때문) 대신 `vec.w`는 투영 나눗셈(perspective division)이라는 
+과정에서 사용됩니다. 
+
+벡터에 대해서는 이후 장에서 훨씬 더 깊이 다루게 될 것입니다. 
+
+정점 쉐이더의 출력을 설정하려면 위치 데이터를 미리 정의된 <Blue>gl_position</Blue> 변수에 대입해야 합니다. 
+이 변수는 내부적으로 `vec4` 타입입니다. <Red>main</Red> 함수가 끝날 때 우리가 <Blue>gl_Position</Blue>에 대입한 값이 
+정점 쉐이더의 출력으로 사용됩니다. 
+
+우리의 입력은 크기가 3인 벡터이므로 , 이를 크기가 4인 벡터로 변환해야 합니다. 이때는 `vec3` 값을 `vec4`생성자에 넣고 
+`w` 성분을 `1.0f`로 설정하면 됩니다.(이 이유에 대해서는 나중 장에서 설명할 것입니다.)
+
+현재의 정점 쉐이더는 아마도 우리가 생각할 수 있는 가장 간단한 정점 쉐이더일 것입니다. 왜냐면 입력 데이터를 
+전혀 처리하지 않고 단순히 쉐이더 출력으로 넘겨주기만 했기 때문입니다. 실제 애플리케이션에서는 입력 데이터가 이미 
+정규화 장치 좌표(NDC)에 있지 않은 경우가 대부분이므로 , 먼저 입력 데이터를 OpenGL의 가시 영역안에 들어오도록 좌표 변환을 해주어야 합니다. 
+
+</Info>
+
+## Compling a shader 쉐이더 컴파일 하기 
+우리는 정점 쉐이더를 위한 소스코드를 const C string에 저장하여 파일 상단에 놓습니다.
+
+```cpp
+const char *vertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+```
+
+
+OpenGL이 쉐이더를 사용하기 위해서는 런타입에 소스코드에서 그것을 동적으로 컴파일 해야합니다. 
+우리가 첫번째로 해야할 일은 쉐이터 객체(오브젝트)를 생성하는 것입니다. 
+그리고 또다시 ID로 참조하게 됩니다. 그래서 우리는 정점 쉐이더를 `unsigned int`로 선언하고 
+쉐이더를 <Func 
+  name="glCreateShader"
+  params='[{"name":"shaderType","type":"GLenum","description":"생성할 쉐이더의 타입을 지정합니다. GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER, GL_COMPUTE_SHADER 중 하나입니다."}]'
+  description="빈 쉐이더 객체를 생성하고 해당 쉐이더 객체에 대한 고유한 참조 ID를 반환합니다. 쉐이더 객체는 쉐이더 소스 코드를 저장하고 컴파일하는 데 사용됩니다. 오류가 발생하면 0을 반환합니다."
+  example="unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);\nunsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);\n\n// 쉐이더 생성 확인\nif (vertexShader == 0) {\n    // 오류 처리\n}"
+  tags='["Shaders", "OpenGL Objects"]'
+/>로 생성합니다. 
+
+```cpp
+unsigned int vertexShader;
+vertexShader = glCreateShader(GL_VERTEX_SHADER);
+```
+
+우리는 생성하고자하는 타입의 쉐이더를 <Func 
+  name="glCreateShader"
+  params='[{"name":"shaderType","type":"GLenum","description":"생성할 쉐이더의 타입을 지정합니다. GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER, GL_TESS_CONTROL_SHADER, GL_TESS_EVALUATION_SHADER, GL_COMPUTE_SHADER 중 하나입니다."}]'
+  description="빈 쉐이더 객체를 생성하고 해당 쉐이더 객체에 대한 고유한 참조 ID를 반환합니다. 쉐이더 객체는 쉐이더 소스 코드를 저장하고 컴파일하는 데 사용됩니다. 오류가 발생하면 0을 반환합니다."
+  example="unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);\nunsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);\n\n// 쉐이더 생성 확인\nif (vertexShader == 0) {\n    // 오류 처리\n}"
+  tags='["Shaders", "OpenGL Objects"]'
+/> 함수의 인자로 전달합니다. 정점 쉐이더(vertex shader)를 만들 것이므로 우리는 <Blue>GL_VERTEX_SHADER</Blue>를 넘겨줍니다. 
+
+다음으로는 쉐이더 객체에 앞에서 만들었던 쉐이더 소스 코드를 넘겨주어 쉐이더를 컴파일 합니다. 
+
+```cpp
+glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+glCompileShader(vertexShader);
+```
+
+<Func 
+  name="glShaderSource"
+  params='[{"name":"shader","type":"GLuint","description":"소스 코드를 교체할 쉐이더 객체를 지정합니다."},{"name":"count","type":"GLsizei","description":"string 배열의 요소 개수를 지정합니다."},{"name":"string","type":"const GLchar**","description":"소스 코드를 포함하는 문자열들의 포인터 배열입니다."},{"name":"length","type":"const GLint*","description":"각 문자열의 길이를 지정하는 배열입니다. NULL이면 문자열이 null-terminated라고 가정합니다."}]'
+  description="주어진 쉐이더 객체의 소스 코드를 교체합니다. 쉐이더가 컴파일될 때마다 현재 소스 코드가 사용됩니다."
+  example="glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);"
+  tags='["Shaders", "Source Code"]'/> 함수는 첫번째 인자로 컴파일할 쉐이더 객체를 받습니다. 두번째 인자는 몇개의 string을 소스코드로 넘겨줄 것인지를 지정합니다. 현재는 한개만 
+넘겨주므로 1로 설정합니다. 세번째 인자는 정점 쉐이더의 실제 소스 코드를 넘겨줍니다. 그리고 네번째 인자는 `NULL`로 둡니다. 
+
+이제 <Func 
+  name="glCompileShader"
+  params='[{"name":"shader","type":"GLuint","description":"컴파일할 쉐이더 객체를 지정합니다."}]'
+  description="쉐이더 객체를 컴파일합니다. 컴파일은 쉐이더 객체에 연결된 소스 코드 문자열을 기반으로 수행됩니다. 컴파일 상태는 쉐이더 객체의 일부로 저장되며, glGetShaderiv 함수를 통해 확인할 수 있습니다."
+  example="glCompileShader(vertexShader);\n\n// 컴파일 성공 여부 확인\nint success;\nglGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);\nif (!success) {\n    // 컴파일 오류 처리\n}"
+  tags='["Shaders", "Compilation"]'/>를 호출하여 쉐이더를 컴파일합니다.
+
+<Info>
+아마도 당신은 이제 <Func 
+  name="glCompileShader"
+  params='[{"name":"shader","type":"GLuint","description":"컴파일할 쉐이더 객체를 지정합니다."}]'
+  description="쉐이더 객체를 컴파일합니다. 컴파일은 쉐이더 객체에 연결된 소스 코드 문자열을 기반으로 수행됩니다. 컴파일 상태는 쉐이더 객체의 일부로 저장되며, glGetShaderiv 함수를 통해 확인할 수 있습니다."
+  example="glCompileShader(vertexShader);\n\n// 컴파일 성공 여부 확인\nint success;\nglGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);\nif (!success) {\n    // 컴파일 오류 처리\n}"
+  tags='["Shaders", "Compilation"]'/>를 호출 후에 컴파일이 성공했는지 아닌지 확인하고 싶을 것입니다. 
+만약 실패했다면 어떤 오류가 발생했는지 확인해서 고쳐야합니다. 컴파일 오류를 확인하는 방법은 다음과 같습니다. 
+
+```cpp
+int  success;
+char infoLog[512];
+glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+``` 
+
+우선 성공 여부를 저장할 정수 변수 하나와 오류 메세지를 담을 버퍼(문자 배열)을 정의합니다. 그런다음 
+<Func 
+  name="glGetShaderiv"
+  params='[{"name":"shader","type":"GLuint","description":"쿼리할 쉐이더 객체를 지정합니다."},{"name":"pname","type":"GLenum","description":"객체 파라미터를 지정합니다. GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH 등이 있습니다."},{"name":"params","type":"GLint*","description":"요청된 객체 파라미터를 반환할 GLint 배열의 포인터입니다."}]'
+  description="쉐이더 객체에 대한 정보를 쿼리할 수 있게 해주는 함수입니다. 개발자가 쉐이더 객체의 다양한 속성과 상태를 확인할 수 있습니다."
+  example="GLint success;\nglGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);\n\n// 다른 정보들도 확인 가능\nGLint logLength;\nglGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);"
+  tags='["Shaders", "Query"]'/>를 사용하여 컴파일이 성공했는지 확인합니다. 만약 컴파일이 실패했다면, <Func 
+  name="glGetShaderInfoLog"
+  params='[{"name":"shader","type":"GLuint","description":"정보 로그를 쿼리할 쉐이더 객체를 지정합니다."},{"name":"maxLength","type":"GLsizei","description":"반환된 정보 로그를 저장할 문자 버퍼의 크기를 지정합니다."},{"name":"length","type":"GLsizei*","description":"infoLog에 반환된 문자열의 길이를 반환합니다 (null terminator 제외). NULL이면 길이를 반환하지 않습니다."},{"name":"infoLog","type":"GLchar*","description":"정보 로그를 반환하는 데 사용되는 문자 배열을 지정합니다."}]'
+  description="쉐이더 객체의 정보 로그를 반환합니다. 정보 로그에는 쉐이더 컴파일과 관련된 정보가 포함됩니다. 쉐이더 컴파일이 실패하면 컴파일 타임 오류를 확인하기 위해 쉐이더의 정보 로그를 확인하는 것이 좋습니다."
+  example="char infoLog[512]; glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);"
+  tags='["Shaders", "Error Handling"]'/>를 호출해 오류 메세지를 가져오고 출력해야 합니다. 
+
+
+
+```cpp
+if(!success)
+{
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+}
+```
+</Info>
+
+만약 에러가 발견되지 않았다면 정점 쉐이더는 이제 컴파일 된 것입니다. 
+
+
+## Fragment shader 프레그먼트 쉐이더 
+
+프레그먼트 쉐이더는 우리가 삼각형을 그리기위해 필요한 두번째이자 마지막 쉐이더 입니다. 
+프레그먼트 쉐이더는 픽셀의 색상 출력 값을 계산하는 쉐이더입니다. 간단하게 하기위해 우선 프레그먼트 쉐이더가 
+항상 오렌지색 색상을 출력하도록 하겠습니다. 
+
