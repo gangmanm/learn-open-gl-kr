@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FiEdit3, FiUser } from 'react-icons/fi';
+import { FiEdit3, FiUser, FiChevronDown } from 'react-icons/fi';
 import { useTheme } from '../contexts/ThemeContext';
 
 const NoteContainer = styled.div<{ theme: any }>`
@@ -31,16 +31,26 @@ const NoteContainer = styled.div<{ theme: any }>`
   }
 `;
 
-const NoteHeader = styled.div<{ theme: any }>`
+const NoteHeader = styled.div<{ theme: any; isCollapsible: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: ${props => props.isCollapsible ? '0' : '12px'};
+  padding: ${props => props.isCollapsible ? '0 0 12px 0' : '0'};
   font-weight: 600;
   font-size: 14px;
   color: ${props => props.theme.mode === 'dark' ? '#ffc107' : '#f57c00'};
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  cursor: ${props => props.isCollapsible ? 'pointer' : 'default'};
+  user-select: none;
+  transition: all 0.2s ease;
+
+  ${props => props.isCollapsible && `
+    &:hover {
+      color: ${props.theme.mode === 'dark' ? '#ffcd38' : '#e65100'};
+    }
+  `}
 `;
 
 const NoteIcon = styled.div<{ theme: any }>`
@@ -57,7 +67,10 @@ const NoteIcon = styled.div<{ theme: any }>`
   color: ${props => props.theme.mode === 'dark' ? '#ffc107' : '#f57c00'};
 `;
 
-const NoteContent = styled.div<{ theme: any }>`
+const NoteContent = styled.div<{ theme: any; isOpen: boolean; isCollapsible: boolean }>`
+  max-height: ${props => props.isCollapsible ? (props.isOpen ? '1000px' : '0') : 'auto'};
+  overflow: ${props => props.isCollapsible ? 'hidden' : 'visible'};
+  transition: ${props => props.isCollapsible ? 'max-height 0.3s ease' : 'none'};
   color: ${props => props.theme.colors.text};
   line-height: 1.6;
   font-size: 14px;
@@ -87,6 +100,15 @@ const NoteContent = styled.div<{ theme: any }>`
   }
 `;
 
+const ChevronIcon = styled.div<{ isOpen: boolean; isCollapsible: boolean }>`
+  display: ${props => props.isCollapsible ? 'flex' : 'none'};
+  align-items: center;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+  transform: ${props => props.isOpen ? 'rotate(0deg)' : 'rotate(-90deg)'};
+  color: ${props => props.theme.mode === 'dark' ? '#ffc107' : '#f57c00'};
+`;
+
 const AuthorInfo = styled.div<{ theme: any }>`
   display: flex;
   align-items: center;
@@ -106,16 +128,21 @@ interface Props {
   children: React.ReactNode;
   author?: string;
   type?: 'note' | 'clarification' | 'addition' | 'correction';
+  collapsible?: boolean;
+  defaultOpen?: boolean;
   className?: string;
 }
 
-const TranslatorNote: React.FC<TranslatorNoteProps> = ({ 
+const TranslatorNote: React.FC<Props> = ({ 
   children, 
   author = "번역자",
   type = "note",
+  collapsible = false,
+  defaultOpen = true,
   className 
 }) => {
   const { theme } = useTheme();
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const getHeaderText = (type: string) => {
     switch (type) {
@@ -142,21 +169,28 @@ const TranslatorNote: React.FC<TranslatorNoteProps> = ({
 
   return (
     <NoteContainer theme={theme} className={className}>
-      <NoteHeader theme={theme}>
+      <NoteHeader 
+        theme={theme} 
+        isCollapsible={collapsible}
+        onClick={collapsible ? () => setIsOpen(!isOpen) : undefined}
+      >
         <NoteIcon theme={theme}>
           {getIcon(type)}
         </NoteIcon>
         {getHeaderText(type)}
+        <ChevronIcon isOpen={isOpen} isCollapsible={collapsible} theme={theme}>
+          <FiChevronDown size={16} />
+        </ChevronIcon>
       </NoteHeader>
-      <NoteContent theme={theme}>
+      <NoteContent theme={theme} isOpen={isOpen} isCollapsible={collapsible}>
         {children}
+        {author && (
+          <AuthorInfo theme={theme}>
+            <FiUser size={10} />
+            {author}
+          </AuthorInfo>
+        )}
       </NoteContent>
-      {author && (
-        <AuthorInfo theme={theme}>
-          <FiUser size={10} />
-          {author}
-        </AuthorInfo>
-      )}
     </NoteContainer>
   );
 };

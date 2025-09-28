@@ -20,7 +20,7 @@ graphics pipeline은 두개의 큰 부분으로 나뉠 수 있습니다.
 파이프라인 안에서 빠르게 처리할 수 있습니다. 
 이러한 처리 코어들은 파이프라인의 각 단계에서 실행되는 작은 프로그램을 구동합니다. 이 작은 프로그램들을 쉐이더(shader) 라고 부릅니다.
 
-<TranslatorNote type="clarification" author="이도경" >
+<TranslatorNote type="clarification" author="이도경" collapsible={true} defaultOpen={false}>
 GPU 코어 
 - CPU는 몇 개의 코어를 차례차례 계산
 - GPU는 단순한 코어를 수천개나 넣어서 계산을 동시에 처리 
@@ -100,7 +100,7 @@ OpenGL의 고급 효과들이 대부분 발생합니다. 일반적으로 프래�
 하지만 이번장의 끝에서 삼각형을 직접 만들어보면, 그래픽스 프로그래밍에 대해 훨씬더 많은 것을 알게 될 것입니다. 
 
 
-<TranslatorNote type="clarification" author="이도경" >
+<TranslatorNote type="clarification" author="이도경" collapsible={true} defaultOpen={false}>
 간단한 정리 삼각형을 그리기 위해서 
 
 <NumberedList>
@@ -160,5 +160,126 @@ OpenGL은 3D공간이므로 우리는 2D 공간에 그려질 삼각형의 z 좌�
 
 </Info> 
 
+정점 데이터를 정의했으니 이제 이것을 그래픽스 파이프라인의 첫 번째 단계인 **정점 셰이더(Vertex Shader)** 에 
+입력으로 보내고 싶습니다. 
+이 작업은 GPU 메모리에 정점 데이터를 저장할 메모리를 만들고,
+OpenGL이 그 메모리를 어떻게 해석해야 하는지 설정하며,
+데이터를 그래픽 카드로 어떻게 보낼지를 지정하는 과정을 통해 이루어집니다. 
+그 후 정점 셰이더는 우리가 지시한 만큼의 정점을 해당 메모리에서 가져와 처리하게 됩니다.
+
+이 메모리들을 위리는 정점 버퍼 객체(Vertex Buffer Objects : VBO)로 관리하게 됩니다. 
+VBO는 대량의 정점들을 GPU 메모리에 저장할 수 있게 해줍니다. 
+이러한 버퍼 객체를 사용하는 것의 장점은 정점을 하나씩 GPU로 보내지 않고 큰 덩어리의 데이터들을 한번에 그래픽스 카드로 보낼 수 있게 해줍니다. 
+만약 충분한 메모리가 남아있으면 여기에 저장할 수도 있습니다. 
+CPU에서 GPU(Graphics Card)로 데이터를 보내는 작업은 상대적으로 느리기 때문에, 가능하다면 많은 데이터를 한번에 보내는게 좋겠죠 
+데이터가 GPU메모리에 전달되고 나면 정점 쉐이더는 거의 즉시 모든 정점들에 매우 빠르게 접근할 수 있습니다. 
+
+VBO는 우리가 OpenGL 소개 장에서 언급했던 OpenGL 객체의 거의 첫 등장입니다. OpenGL의 다른 객체들과 마찬가지로 
+버퍼에도 고유한 ID가 부여됩니다. 따라서 
+<Func 
+  name="glGenBuffers"
+  params='[{"name":"n","type":"GLsizei","description":"생성할 버퍼 객체의 개수입니다."},{"name":"buffers","type":"GLuint*","description":"생성된 버퍼 객체의 ID들이 저장될 배열의 포인터입니다."}]'
+  description="OpenGL에서 하나 또는 여러 개의 버퍼 객체를 생성합니다. 버퍼 객체는 정점 데이터, 인덱스 데이터 등을 GPU 메모리에 저장하기 위해 사용됩니다. 생성된 각 버퍼 객체에는 고유한 ID가 부여되며, 이 ID를 통해 해당 버퍼를 참조할 수 있습니다."
+  example="GLuint VBO; // 버퍼 ID를 저장할 변수\nglGenBuffers(1, &VBO); // 1개의 버퍼 생성\n\n// 여러 개 생성하는 경우\nGLuint buffers[3];\nglGenBuffers(3, buffers); // 3개의 버퍼 생성"
+  tags='["Buffer Management", "OpenGL Objects"]'
+/> 를 사용해 버퍼 ID를 생성할 수 있습니다. 
+
+```cpp
+unsigned int VBO;
+glGenBuffers(1, &VBO);  
+```
+
+
+<Collapsible title="OpenGL 객체" variant="info">
+
+### OpenGL 에서의 객체란
+
+OpenGL에서 객체란 OpenGL 상태의 일부분을 대표하는 설정값들의 집합입니다. 
+예를 들어, 하나의 객체는 그리기 창(window)의 설정을 나타낼 수 있으며 
+이 객체에는 창의 크기, 색상 수, 이름 등 다양한 옵션션을 설정할 수 있습니다. 
+
+### 객체의 장점 
+
+OpenGL에서 객체를 사용하면 여러 개의 객체를 만들어 따로따로 설정할 수 있고,
+작업 시점에 맞춰 원하는 객체를 필요할 때마다 바인딩하여 사용할 수 있습니다.
+
+예를 들어: 3D 모델 객체를 각각 하나의 OpenGL 객체로 만들 수 있습니다. (예: 집, 캐릭터 등) 미리 설정해 둔 각 객체를 그릴 때마다 바인딩만 하면 되고,
+다시 설정을 반복하지 않아도 됩니다.
+
+</Collapsible>
+
+
+<TranslatorNote type="clarification" author="이도경" collapsible={true} defaultOpen={false}>
+
+#### OpenGL에서 오브젝트 = 객체 (Object)란?
+OpenGL은 화면에 뭔가를 그릴때 GPU안에 여러 자원을 만들어서 관리합니다. 
+이 자원들을 오브젝트(Object)라고 부릅니다.  
+
+#### 왜 ID가 필요할까?
+OpenGL은 C 함수 기반이라서 객체를 직접 다루지 못합니다. (객체지향 언어가 아니기 때문에 클래스/객체 형태로 다루지 못합니다. 
+대신 함수와 정수 ID로 자원을 관리합니다.)
+그래서 GPU에 뭔가를 만들면 OpenGL은 그걸 가리키는 숫자 ID를 줍니다. (마치 주민등록 번호 처럼 번호 = GPU 메모리 자원 으로 연결되죠)
+나중에 이 ID를 다시 불러와서 (glBindBuffer) 쓰면 , GPU가 그 자원을 찾아서 사용합니다. 
+
+#### VBO의 경우 
+VBO = 정점 데이터를 담는 GPU 메모리 상자 
+VBO를 하나 만들어 달라 요청하면 OpenGL이 GPU에 VBO 공간을 만들고 그걸 가리키는 ID를 돌려주는 것입니다. 
+그 ID 변수를 저장해 두었다가 이후에 데이터 넣기/바인딩/삭제 같은 작업을 합니다.
+
+
+</TranslatorNote> 
+
+
+OpenGL은 많은 타입의 버퍼 오브젝트(객체)를 가지고 있습니다. 그중 정점 버퍼의 오브젝트 타입은 <Blue>GL_ARRAY_BUFFER</Blue> 입니다. 
+OpenGL은 우리가 여러 버퍼들을 그들 각자의 타입만 다르다면 한번에 바인딩 할 수 있게 해줍니다. 
+우리는 새롭게 생성된 버퍼를 <Blue>GL_ARRAY_BUFFER</Blue> 타겟으로 전달해 줄수 있습니다. 바로 <Func 
+  name="glBindBuffer"
+  params='[{"name":"target","type":"GLenum","description":"바인딩할 버퍼의 타입을 지정합니다. 가장 일반적인 것은 GL_ARRAY_BUFFER와 GL_ELEMENT_ARRAY_BUFFER입니다."},{"name":"buffer","type":"GLuint","description":"바인딩할 버퍼 객체의 ID입니다. 0을 전달하면 현재 바인딩된 버퍼를 해제합니다."}]'
+  description="버퍼 객체를 현재 버퍼 타입 타겟에 바인딩합니다. 한 번에 각 버퍼 타입당 하나의 버퍼만 바인딩될 수 있습니다. 버퍼를 바인딩하면 해당 타입에 대한 모든 후속 버퍼 작업이 현재 바인딩된 버퍼에 적용됩니다."
+  example="glBindBuffer(GL_ARRAY_BUFFER, VBO);\n// 이제 GL_ARRAY_BUFFER 타겟에 대한 모든 작업이 VBO에 적용됩니다\n\n// 바인딩 해제\nglBindBuffer(GL_ARRAY_BUFFER, 0);"
+  tags='["Buffer Management", "OpenGL State"]'
+/> 함수를 사용해서 말이죠.
+
+```cpp
+glBindBuffer(GL_ARRAY_BUFFER, VBO);  
+```
+
+이 시점부터 우리가 만드는 어떤 <Blue>GL_ARRAY_BUFFER</Blue> 타깃에 대해 호출하는 모든 버퍼 관련 함수는 현재 바인딩된 버퍼(VBO)
+를 설정하게 됩니다. 그 다음 <Func 
+  name="glBufferData"
+  params='[{"name":"target","type":"GLenum","description":"버퍼 객체의 타겟을 지정합니다. 가장 일반적인 것은 GL_ARRAY_BUFFER와 GL_ELEMENT_ARRAY_BUFFER입니다."},{"name":"size","type":"GLsizeiptr","description":"버퍼 객체의 새로운 데이터 저장소 크기를 바이트 단위로 지정합니다."},{"name":"data","type":"const GLvoid*","description":"버퍼로 복사될 데이터에 대한 포인터입니다. NULL이면 할당된 메모리를 비워둡니다."},{"name":"usage","type":"GLenum","description":"데이터의 예상 사용 패턴입니다. 가장 일반적인 것은 GL_STATIC_DRAW, GL_DYNAMIC_DRAW, GL_STREAM_DRAW입니다."}]'
+  description="현재 바인딩된 버퍼 객체에 메모리를 할당하고 데이터를 저장합니다. 버퍼 객체를 추가/편집하는 여러 함수 중 하나입니다. 이 함수는 이전에 할당된 데이터를 새로운 데이터로 대체합니다."
+  example="GLfloat vertices[] = {\n    0.0f,  0.5f, 0.0f,\n   -0.5f, -0.5f, 0.0f,\n    0.5f, -0.5f, 0.0f\n};\nglBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);"
+  tags='["Buffer Management", "Data Upload"]'
+/> 함수를 호출해서  을 호출해서 미리 정의한 정점 배열을 현재 바인딩된 버퍼의 메모리로 복사합니다. 
+
+```cpp
+
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+```
+<Func 
+  name="glBufferData"
+  params='[{"name":"target","type":"GLenum","description":"버퍼 객체의 타겟을 지정합니다. 가장 일반적인 것은 GL_ARRAY_BUFFER와 GL_ELEMENT_ARRAY_BUFFER입니다."},{"name":"size","type":"GLsizeiptr","description":"버퍼 객체의 새로운 데이터 저장소 크기를 바이트 단위로 지정합니다."},{"name":"data","type":"const GLvoid*","description":"버퍼로 복사될 데이터에 대한 포인터입니다. NULL이면 할당된 메모리를 비워둡니다."},{"name":"usage","type":"GLenum","description":"데이터의 예상 사용 패턴입니다. 가장 일반적인 것은 GL_STATIC_DRAW, GL_DYNAMIC_DRAW, GL_STREAM_DRAW입니다."}]'
+  description="현재 바인딩된 버퍼 객체에 메모리를 할당하고 데이터를 저장합니다. 버퍼 객체를 추가/편집하는 여러 함수 중 하나입니다. 이 함수는 이전에 할당된 데이터를 새로운 데이터로 대체합니다."
+  example="GLfloat vertices[] = {\n    0.0f,  0.5f, 0.0f,\n   -0.5f, -0.5f, 0.0f,\n    0.5f, -0.5f, 0.0f\n};\nglBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);"
+  tags='["Buffer Management", "Data Upload"]'
+/> 는  사용자 정의 데이터를 현재 바인딩된 버퍼에 복사하는 데 특화된 함수입니다. 
+<NumberedList>
+<NumberedItem>**첫번째 인자**: 우리가 데이터를 복사하려는 버퍼의 타입을 지정합니다. 여기서는 GL_ARRAY_BUFFER 타깃에 현재 바인딩된 정점 버퍼(VBO)입니다.</NumberedItem>
+<NumberedItem>**두번째 인자**: 버퍼에 전달할 데이터의 크기(바이트 단위)를 지정합니다. 보통 정점 데이터의 sizeof을 사용하면 충분합니다.</NumberedItem>
+<NumberedItem>**세번째 인자**: 우리가 실제로 전송하려는 데이터입니다.</NumberedItem>
+<NumberedItem>**네번째 인자**: 그래픽 카드가 주어진 데이터를 어떻게 관리해야하는지를 지정합니다. 이 값은 3가지 형태가 있습니다.</NumberedItem>
+</NumberedList> 
+
+- <Blue>GL_STREAM_DRAW</Blue> 데이터를 한번만설정하고 , GPU에서 많아야 몇번만 사용합니다. 
+- <Blue>GL_STATIC_DRAW</Blue> 데이터를 한 번만 설정하고 여러 번 사용합니다.
+- <Blue>GL_DYNAMIC_DRAW</Blue> 데이터를 자주 변경하면서 여러 번 사용합니다.
+
+삼각형의 위치 데이터는 변하지 않고, 많이 사용되며, 모든 렌더 호출마다 동일하게 유지되므로 <Blue>GL_STATIC_DRAW</Blue> 를 사용하는 것이
+가장 적합합니다. 반대로 데이터가 자주 변경될 가능성이 있는 버퍼라면,<Blue>GL_DYNAMIC_DRAW</Blue> 를 사용하면 그래픽 카드가 더 빠른 쓰기가 가능한
+메모리에 데이터를 배치하도록 보장합니다. 
+
+지금까지 우리는 VBO(정점 버퍼 객체=오브젝트)가 관리하는 그래픽 카드 메모리에 정점 데이터를 저장했습니다. 
+이제 이 데이터를 실제로 처리할 정점 쉐이더와 프래그먼트 쉐이더를 만들어야하므로 다음 단계로 넘어가겠습니다. 
 
 

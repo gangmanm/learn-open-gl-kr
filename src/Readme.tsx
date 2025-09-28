@@ -11,6 +11,7 @@ import { LinkBlock } from './components/LinkBlock';
 import List from './components/List';
 import NumberedList, { NumberedItem } from './components/NumberedList';
 import TranslatorNote from './components/TranslatorNote';
+import Collapsible from './components/Collapsible';
 import { useTheme } from './contexts/ThemeContext';
 import { DirectoryStructure } from './components/DirectoryStructure';
 import { Red, Green, Blue } from './components/ColorText';
@@ -43,6 +44,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     NumberedItem: NumberedItem,
     DirectoryStructure: DirectoryStructure,
     TranslatorNote: TranslatorNote,
+    Collapsible: Collapsible,
     Red: Red,
     Green: Green,
     Blue: Blue,
