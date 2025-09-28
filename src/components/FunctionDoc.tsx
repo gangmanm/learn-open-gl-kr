@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import CodeBlock from './CodeBlock';
 
 const Container = styled.span`
   position: relative;
@@ -61,13 +62,7 @@ const ParamName = styled.code`
   color: #1a5cff;
 `;
 
-const CodeBlock = styled.div`
-  background: #222;
-  color: #fff;
-  padding: 8px;
-  border-radius: 4px;
-  font-family: monospace;
-  white-space: pre-wrap;
+const ExampleCodeBlock = styled.div`
   margin-top: 8px;
 `;
 
@@ -163,7 +158,9 @@ const FunctionDoc: React.FC<FunctionDocProps> = ({ name, params, description, ex
           {example && (
             <div>
               <strong>예시:</strong>
-              <CodeBlock>{example}</CodeBlock>
+              <ExampleCodeBlock>
+                <CodeBlock className="language-cpp">{example.replace(/\\n/g, '\n')}</CodeBlock>
+              </ExampleCodeBlock>
             </div>
           )}
           {parsedTags.length > 0 && (

@@ -251,7 +251,7 @@ glBindBuffer(GL_ARRAY_BUFFER, VBO);
   description="현재 바인딩된 버퍼 객체에 메모리를 할당하고 데이터를 저장합니다. 버퍼 객체를 추가/편집하는 여러 함수 중 하나입니다. 이 함수는 이전에 할당된 데이터를 새로운 데이터로 대체합니다."
   example="GLfloat vertices[] = {\n    0.0f,  0.5f, 0.0f,\n   -0.5f, -0.5f, 0.0f,\n    0.5f, -0.5f, 0.0f\n};\nglBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);"
   tags='["Buffer Management", "Data Upload"]'
-/> 함수를 호출해서  을 호출해서 미리 정의한 정점 배열을 현재 바인딩된 버퍼의 메모리로 복사합니다. 
+  /> 함수를 호출해서 미리 정의한 정점 배열을 현재 바인딩된 버퍼의 메모리로 복사합니다.
 
 ```cpp
 
@@ -263,7 +263,7 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   description="현재 바인딩된 버퍼 객체에 메모리를 할당하고 데이터를 저장합니다. 버퍼 객체를 추가/편집하는 여러 함수 중 하나입니다. 이 함수는 이전에 할당된 데이터를 새로운 데이터로 대체합니다."
   example="GLfloat vertices[] = {\n    0.0f,  0.5f, 0.0f,\n   -0.5f, -0.5f, 0.0f,\n    0.5f, -0.5f, 0.0f\n};\nglBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);"
   tags='["Buffer Management", "Data Upload"]'
-/> 는  사용자 정의 데이터를 현재 바인딩된 버퍼에 복사하는 데 특화된 함수입니다. 
+/> 는 사용자 정의 데이터를 현재 바인딩된 버퍼에 복사하는 데 특화된 함수입니다. 
 <NumberedList>
 <NumberedItem>**첫번째 인자**: 우리가 데이터를 복사하려는 버퍼의 타입을 지정합니다. 여기서는 GL_ARRAY_BUFFER 타깃에 현재 바인딩된 정점 버퍼(VBO)입니다.</NumberedItem>
 <NumberedItem>**두번째 인자**: 버퍼에 전달할 데이터의 크기(바이트 단위)를 지정합니다. 보통 정점 데이터의 sizeof을 사용하면 충분합니다.</NumberedItem>
@@ -271,15 +271,16 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 <NumberedItem>**네번째 인자**: 그래픽 카드가 주어진 데이터를 어떻게 관리해야하는지를 지정합니다. 이 값은 3가지 형태가 있습니다.</NumberedItem>
 </NumberedList> 
 
-- <Blue>GL_STREAM_DRAW</Blue> 데이터를 한번만설정하고 , GPU에서 많아야 몇번만 사용합니다. 
-- <Blue>GL_STATIC_DRAW</Blue> 데이터를 한 번만 설정하고 여러 번 사용합니다.
-- <Blue>GL_DYNAMIC_DRAW</Blue> 데이터를 자주 변경하면서 여러 번 사용합니다.
+- <Blue>GL_STREAM_DRAW</Blue>: 데이터를 한 번만 설정하고, GPU에서 많아야 몇 번만 사용합니다.
+- <Blue>GL_STATIC_DRAW</Blue>: 데이터를 한 번만 설정하고 여러 번 사용합니다.
+- <Blue>GL_DYNAMIC_DRAW</Blue>: 데이터를 자주 변경하면서 여러 번 사용합니다.
 
-삼각형의 위치 데이터는 변하지 않고, 많이 사용되며, 모든 렌더 호출마다 동일하게 유지되므로 <Blue>GL_STATIC_DRAW</Blue> 를 사용하는 것이
-가장 적합합니다. 반대로 데이터가 자주 변경될 가능성이 있는 버퍼라면,<Blue>GL_DYNAMIC_DRAW</Blue> 를 사용하면 그래픽 카드가 더 빠른 쓰기가 가능한
-메모리에 데이터를 배치하도록 보장합니다. 
+삼각형의 위치 데이터는 변하지 않고, 많이 사용되며, 모든 렌더 호출마다 동일하게 유지되므로 <Blue>GL_STATIC_DRAW</Blue>를 사용하는 것이
+가장 적합합니다. 반대로 데이터가 자주 변경될 가능성이 있는 버퍼라면, <Blue>GL_DYNAMIC_DRAW</Blue>를 사용하면 그래픽 카드가 더 빠른 쓰기가 가능한
+메모리에 데이터를 배치하도록 보장합니다.
 
-지금까지 우리는 VBO(정점 버퍼 객체=오브젝트)가 관리하는 그래픽 카드 메모리에 정점 데이터를 저장했습니다. 
-이제 이 데이터를 실제로 처리할 정점 쉐이더와 프래그먼트 쉐이더를 만들어야하므로 다음 단계로 넘어가겠습니다. 
+지금까지 우리는 VBO(정점 버퍼 객체)가 관리하는 그래픽 카드 메모리에 정점 데이터를 저장했습니다.
+이제 이 데이터를 실제로 처리할 정점 쉐이더와 프래그먼트 쉐이더를 만들어야 하므로 다음 단계로 넘어가겠습니다. 
 
-
+## Vertex shader 
+정점 쉐이더(Vertex Shader)
