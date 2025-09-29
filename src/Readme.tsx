@@ -214,7 +214,8 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
           repoId="R_kgDOPFBMZQ"
           category="General"
           categoryId="DIC_kwDOPFBMZc4CwBGG"
-          mapping="pathname"
+          mapping="specific"
+          term={`learn-opengl-kr-${doc}`}
           reactionsEnabled={true}
           emitMetadata={false}
           inputPosition="bottom"
