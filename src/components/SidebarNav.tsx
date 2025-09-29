@@ -196,6 +196,7 @@ const DOCS: NavItemType[] = [
       { label: 'Hello Window', value: 'hellowindow' },
       { label: 'Hello Triangle', value: 'hellotriangle' },
       { label: 'Shaders', value: 'shaders' },
+      { label: 'Textures', value: 'textures' },
     ],
   },
 ];
