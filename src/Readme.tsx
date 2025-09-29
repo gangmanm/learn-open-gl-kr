@@ -108,15 +108,15 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
         </span>
          <span style={{ 
            flex: 1,
-           color: theme.mode === 'dark' ? '#4096ff !important' : theme.colors.text + ' !important',
-           fontWeight: theme.mode === 'dark' ? '600' : 'normal',
+           color: theme.mode === 'dark' ? '#ffffff !important' : theme.colors.text + ' !important',
+           fontWeight: theme.mode === 'dark' ? '500' : 'normal',
            // 추가 스타일로 강제 적용
-           WebkitTextFillColor: theme.mode === 'dark' ? '#4096ff' : theme.colors.text,
+           WebkitTextFillColor: theme.mode === 'dark' ? '#ffffff' : theme.colors.text,
            textShadow: 'none'
          }}>
            <div style={{ 
-             color: theme.mode === 'dark' ? '#4096ff !important' : theme.colors.text + ' !important',
-             fontWeight: theme.mode === 'dark' ? '600' : 'normal'
+             color: theme.mode === 'dark' ? '#ffffff !important' : theme.colors.text + ' !important',
+             fontWeight: theme.mode === 'dark' ? '500' : 'normal'
            }}>
              {props.children}
            </div>

@@ -119,8 +119,35 @@ const GlobalStyle = createGlobalStyle`
   [data-theme="dark"] ul li *,
   [data-theme="dark"] ol li,
   [data-theme="dark"] ol li * {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+  }
+
+  /* 다크모드에서 리스트 내 링크는 파란색으로 유지 */
+  [data-theme="dark"] ul li a,
+  [data-theme="dark"] ul li a *,
+  [data-theme="dark"] ol li a,
+  [data-theme="dark"] ol li a *,
+  [data-theme="dark"] ul li [role="link"],
+  [data-theme="dark"] ul li [role="link"] *,
+  [data-theme="dark"] ol li [role="link"],
+  [data-theme="dark"] ol li [role="link"] * {
     color: #4096ff !important;
-    font-weight: 600 !important;
+    text-decoration: underline !important;
+  }
+
+  /* 다크모드에서 LinkBlock 컴포넌트 스타일 */
+  [data-theme="dark"] ul li span[role="link"],
+  [data-theme="dark"] ol li span[role="link"] {
+    background: #1a365d !important;
+    border-color: #4096ff !important;
+    color: #4096ff !important;
+  }
+
+  [data-theme="dark"] ul li span[role="link"]:hover,
+  [data-theme="dark"] ol li span[role="link"]:hover {
+    background: #2d5a87 !important;
+    color: #60a5fa !important;
   }
 
   /* 라이트모드에서 리스트 텍스트 색상 */
