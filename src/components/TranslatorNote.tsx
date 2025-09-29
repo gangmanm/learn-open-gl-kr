@@ -68,7 +68,7 @@ const NoteIcon = styled.div<{ theme: any }>`
 `;
 
 const NoteContent = styled.div<{ theme: any; isOpen: boolean; isCollapsible: boolean }>`
-  max-height: ${props => props.isCollapsible ? (props.isOpen ? '1000px' : '0') : 'auto'};
+  max-height: ${props => props.isCollapsible ? (props.isOpen ? '9999px' : '0') : 'auto'};
   overflow: ${props => props.isCollapsible ? 'hidden' : 'visible'};
   transition: ${props => props.isCollapsible ? 'max-height 0.3s ease' : 'none'};
   color: ${props => props.theme.colors.text};
@@ -98,9 +98,15 @@ const NoteContent = styled.div<{ theme: any; isOpen: boolean; isCollapsible: boo
     font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
     font-size: 13px;
   }
+
+  @media (max-width: 768px) {
+    max-height: ${props => props.isCollapsible ? (props.isOpen ? 'none' : '0') : 'auto'};
+    overflow: ${props => props.isCollapsible ? (props.isOpen ? 'visible' : 'hidden') : 'visible'};
+    transition: none;
+  }
 `;
 
-const ChevronIcon = styled.div<{ isOpen: boolean; isCollapsible: boolean }>`
+const ChevronIcon = styled.div<{ theme: any; isOpen: boolean; isCollapsible: boolean }>`
   display: ${props => props.isCollapsible ? 'flex' : 'none'};
   align-items: center;
   margin-left: auto;
