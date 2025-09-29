@@ -10,7 +10,7 @@ const Container = styled.span<{ theme: any }>`
   display: inline-block;
   margin: 0 4px;
   border-bottom: 1px solid ${props => props.theme.mode === 'dark' ? '#ff6b6b' : '#ef4444'};
-  z-index: 9998;
+  z-index: 99;
   
   @media (max-width: 768px) {
     margin: 0 2px;
@@ -51,7 +51,7 @@ const Box = styled.div<{ theme: any; isVisible: boolean }>`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) ${props => props.isVisible ? 'scale(1)' : 'scale(0.9)'};
-  z-index: 9999;
+  z-index: 100;
   min-width: 320px;
   max-width: 450px;
   opacity: ${props => props.isVisible ? 1 : 0};

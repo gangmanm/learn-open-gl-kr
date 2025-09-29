@@ -12,4 +12,284 @@
 
 # GLSL 
 
-쉐이더들은 C 언어와 같은 언어인 GLSL로 작성됩니다. 
+쉐이더들은 C 언어와 같은 언어인 GLSL로 작성됩니다. GLSL은 그래픽스 사용에 맞게 설계되었으며, 벡터와 행렬
+연산에 특화된 유용한 기능들을 포함하고 있습니다. 
+
+쉐이더는 항상 버전 선언으로 시작하며, 그 뒤에 입력 변수(input), 출력 변수(output), uniform,그리고 `main` 함수가
+옵니다. 각 쉐이더의 진입점(entry point)는 `main` 함수이며, 여기서 입력 변수를 처리하고 결과를 
+출력 변수에 기록합니다. 
+
+`uniform`이 무엇인지 몰라도 괜찮습니다. 곧 다루게 될 것입니다. 
+
+쉐이더는 보통 다음과 같은 형태를 가집니다. 
+
+```cpp
+#version version_number
+in type in_variable_name;
+in type in_variable_name;
+
+out type out_variable_name;
+  
+uniform type uniform_name;
+  
+void main()
+{
+  // process input(s) and do some weird graphics stuff
+  ...
+  // output processed stuff to output variable
+  out_variable_name = weird_stuff_we_processed;
+}
+```
+
+우리가 정점 쉐이더 (vertex shader)에 대해 알아보았을때 각각의 입력 변수들은 <Green> 정점 속성 (vertex attribute) </Green>
+라고도 알려진다고 했습니다. 
+우리가선언할 수 있는 정점 속성의 최대 개수는 하드웨어에 의해 제한됩니다. 
+OpenGL은 최소한 16개의 4-컴포넌트 정점 속성을 항상 사용할 수 있도록 보장하지만, 일부 하드웨어에서는 더
+많은 정점 속성을 지원할 수도 있습니다. 이 경우 <Blue>GL_MAX_VERTEX_ATTRIBS</Blue>를 통해 
+확인할 수 있습니다. 
+
+
+<TranslatorNote type="clarification" author="이도경" collapsible={true} defaultOpen={false}>
+### 정점 속성(Vertex Attribute)란?
+정점 하나가 가진 데이터 조각 
+
+정점(vertex) = 3D 공간의 한 점 
+하지만 점 하나가 단순히 (x,y,z) 좌표만 있는 것이 아니라 보통 여러 정보를 가진다 (예: 위치 , 색상,법선 벡터, 텍스터 좌표)
+이 각각이 정점 속성이다. 
+
+사각형을 그린다고 하면 각 정점에는 이런 데이터가 있을 수 있다. 
+```makefile
+위치: (0.5, 0.5, 0.0)
+색상: (1.0, 0.0, 0.0)   → 빨강
+UV:   (1.0, 1.0)
+```
+
+여기서 
+- 위치 = 정점 속성 #0
+- 색상 = 정점 속성 #1 
+- UV - 정점 속성 #2 
+
+쉐이더에서는 이렇게 받게 된다. 
+
+```GLSL
+layout (location = 0) in vec3 aPos;    // 위치
+layout (location = 1) in vec3 aColor;  // 색상
+layout (location = 2) in vec2 aTex;    // 텍스처 좌표
+```
+
+- 따라서 4-컴포넌트 정점 속성이란, 각 속성은 `vec4`처럼 최대 4개의 값(X,y,z,w)를 가질 수 있다. 
+- 16개의 4-컴포넌트 보장이란? : 최소한 16개의 속성 슬롯을 항상 쓸 수 있다. 즉 `vec4` 기준으로 16개 -> float 4 X 16 = 64개의 float 값을 정점당 전달 가능  
+
+</TranslatorNote> 
+
+
+
+```cpp
+
+int nrAttributes;
+glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+```
+이는 보통 최소 16을 반환합니다. 그리고 16개로 충분히 대부분의 목적을 소화할 수 있습니다. 
+
+## Types 
+
+GLSL은 다른 프로그래밍 언어와 마찬가지로 작업하고자 하는 변수의 종류를 지정하기 위한 데이터 타입을 가지고 있습니다. 
+GLSL은 C와 같은 언어에서 알고 있는 대부분의 기본 타입들을 가지고 있습니다: `int`, `float`, `double`, `uint`, `bool`. GLSL은 또한 우리가 많이 사용할 두 가지 컨테이너 타입인 벡터(vectors)와 행렬(matrices)을 제공합니다. 행렬은 나중 장에서 다루겠습니다.
+
+### 벡터 (Vectors)
+
+GLSL에서 벡터는 앞서 언급한 기본 타입들 중 하나에 대한 2, 3 또는 4개 구성요소 컨테이너입니다. 다음과 같은 형태를 가질 수 있습니다 (n은 구성요소의 수를 나타냅니다):
+
+- `vecn`: n개의 float로 구성된 기본 벡터
+- `bvecn`: n개의 boolean으로 구성된 벡터  
+- `ivecn`: n개의 integer로 구성된 벡터
+- `uvecn`: n개의 unsigned integer로 구성된 벡터
+- `dvecn`: n개의 double 구성요소로 구성된 벡터
+
+대부분의 경우 float가 우리 목적에 충분하므로 기본 `vecn`을 사용할 것입니다.
+
+벡터의 구성요소는 `vec.x`를 통해 접근할 수 있습니다. 여기서 x는 벡터의 첫 번째 구성요소입니다. `.x`, `.y`, `.z`, `.w`를 사용하여 각각 첫 번째, 두 번째, 세 번째, 네 번째 구성요소에 접근할 수 있습니다. GLSL은 또한 색상에 대해서는 `rgba`를, 텍스처 좌표에 대해서는 `stpq`를 사용하여 동일한 구성요소에 접근할 수 있도록 합니다.
+
+벡터 데이터 타입은 **스위즐링(swizzling)**이라고 불리는 흥미롭고 유연한 구성요소 선택을 허용합니다. 스위즐링을 사용하면 다음과 같은 문법을 사용할 수 있습니다:
+
+```glsl
+vec2 someVec;
+vec4 differentVec = someVec.xyxx;
+vec3 anotherVec = differentVec.zyw;
+vec4 otherVec = someVec.xxxx + anotherVec.yxzy;
+```
+원래 벡터가 해당 컴포넌트를 가지고 있기만 하다면 최대 4개의 글자를 조합해 새로운 벡터(같은 타입)를 만들 수 있습니다. 하지만 예를 들어 `vec2`에서는 `.z` 컴포넌트에 접근하는 것은 
+허용되지 않습니다. 또한 벡터를 다른 벡터 생성자의 인자로 전달할 수도 있는데, 이렇게 하면 필요한 인자 수를 줄일 수 있습니다. 
+
+
+```cpp 
+
+vec2 vect = vec2(0.5, 0.7);
+vec4 result = vec4(vect, 0.0, 0.0);
+vec4 otherResult = vec4(result.xyz, 1.0);
+```
+
+벡터들은 그렇기에 유연한 데이터 타입입니다. 이들을 통해 온갖 입력값과 출력값을 만들 수 있습니다. 
+이 책 내에서 우리는 벡터를 다룰 여러가지 창의적인 예시를 보게 될 것입니다. 
+
+### Ins and outs 
+
+쉐이더는 그 자체로 작은 프로그램이지만, 전체 그리픽 파이프라인의 일부이기도 합니다. 그래서 쉐이더 마다 
+입력과 출력을 정의하여 서로 데이터를 주고 받을 수 있도록 해야합니다. GLSL은 이를 위해  `in` 와 `out` 키워드를 제공합니다. 
+각 쉐이더는 이 키워드를 통해 입력과 출력을 정의할 수 있으며, 한 쉐이더의 출력 변수가 다음 쉐이더의 입력 변수와 일치하면 값이 전달 됩니다. 
+다만, 정점 쉐이더와 프래그먼트 쉐이더는 이 부분에서 약간 차이가 있습니다. 
+
+정점 쉐이더는 **반드시** 어떤 형태의 입력을 받아야 합니다. 그렇지 않으면 사실상 비활성화 되어있기 때문입니다. 정점 쉐이더의 입력은 특별한데
+바로 정점 데이터(vertex data)에서 직접 값을 받습니다. 정점 데이터가 어떻게 구성되어 있는지 정의하기 위해 
+우리는 입력 변수에 location 메타 데이터를 지정하여 CPU에서 정점 속성을 설정할 수 있도록 합니다. 
+지난 장에서 본 `layout(location=0)`이 바로 그것입니다. 
+따라서 정점 쉐이더의 입력은 정점 데이터와 연결될 수 있도록 추가적인 `layout` 지정이 필요합니다. 
+
+<Info>
+물론 `layout (location = 0)` 지정자를 생략하고 OpenGL 코드에서 `glGetAttribLocation`을 통해 속성 위치를 쿼리할 수도 있지만, 
+정점 쉐이더에서 직접 설정하는 것이 더 쉽고 이해하기 쉬우며 여러분(그리고 OpenGL)의 작업을 줄여줍니다.
+</Info>
+
+## glGetAttribLocation 함수
+
+`layout (location = 0)` 지정자를 생략하고, OpenGL 코드에서 
+
+<Func 
+  name="glGetAttribLocation"
+  description="glGetAttribLocation 함수는 링킹 단계에서 할당된 정점 속성 위치를 주어진 쉐이더 프로그램과 속성 이름을 통해 조회합니다. 위치를 찾을 수 없으면 -1을 반환합니다. 이는 속성 이름이 잘못되었거나, 정점 속성이 실제로 쉐이더 코드에서 사용되지 않아 컴파일러에 의해 삭제/최적화되었기 때문일 수 있습니다."
+  params='[{"name":"program","type":"GLuint","description":"쿼리할 프로그램 객체를 지정합니다."},{"name":"name","type":"const GLchar*","description":"위치를 쿼리할 정점 속성의 이름을 포함하는 null로 끝나는 문자열에 대한 포인터입니다."}]'
+  example={`GLint vertAttribLoc;
+vertAttribLoc = glGetAttribLocation(shaderProgram, "position");
+glEnableVertexAttribArray(vertAttribLoc);`}
+  tags={[
+    "Shaders"
+  ]}
+/> 을 통해 속성 위치를 조회하는 것도 가능합니다.
+
+하지만 저는 정점 쉐이더에서 직접 위치를 지정하는 방법을 선호합니다. 
+그 편이 이해도 쉽고 여러분(그리고 OpenGL도) 모두의 작업을 덜어주기 때문입니다. 
+
+
+
+또 다른 예외는 프래그먼트 쉐이더 (Fragment Shader)인데 이 쉐이더는 최종 출력 색상을 만들어 내야 하기 때문에 
+`vec4` 타입의 색상 출력 변수가 필요합니다. 만약 프래그먼트 쉐이더에서 출력 색상을 지정하지 않으면
+해당 프래그먼트의 컬러 버퍼 출력은 정의되지 않은 상태가 됩니다. ( 보통 OpenGL은 그것을 검정색이나 흰색으로 렌더링 합니다)
+
+따라서 한 쉐이더에서 다른 쉐이더로 데이터를 전달하려면 보내는 쉐이더에서는 출력 변수를 선언하고, 받는 쉐이더에서는 동일한 입력 변수를 
+선언해야 합니다. 양쪽의 타입과 이름이 같다면, OpenGL은 이 변수들을 서로 연결해주고 쉐이더 간에 데이터를 주고 받을 수 있게 됩니다. 
+(이 연결은 프로그램 객체를 링크할 때 이루어 집니다.)
+
+이 방식이 실제로 어떻게 동작하는지 보여주기 위해, 이전 장의 쉐이더를 수정해서 정점 쉐이더가 프래그먼트 쉐이더의 색상을 결정하도록 
+만들어 보겠습니다. 
+
+##### Vertex Shader ( 정점 쉐이더 )
+
+```glsl
+#version 330 core
+layout (location = 0) in vec3 aPos; // the position variable has attribute position 0
+  
+out vec4 vertexColor; // specify a color output to the fragment shader
+
+void main()
+{
+    gl_Position = vec4(aPos, 1.0); // see how we directly give a vec3 to vec4's constructor
+    vertexColor = vec4(0.5, 0.0, 0.0, 1.0); // set the output variable to a dark-red color
+}
+```
+
+
+ ##### Fragment Shdaer (프래그먼트 쉐이더)
+
+
+ ```glsl 
+ 
+#version 330 core
+out vec4 FragColor;
+  
+in vec4 vertexColor; // the input variable from the vertex shader (same name and same type)  
+
+void main()
+{
+    FragColor = vertexColor;
+} 
+``` 
+보시다시피 우리는 정점 쉐이더에서 <Blue>vec4</Blue> 타입의 출력 변수인 <Blue>vertexColor</Blue>를 선언하고 
+값을 설정했습니다. 그리고 프래그먼트 쉐이더에서는 동일한 이름의 입력 변수 <Blue>vertexColor</Blue>를 선언했습니다. 
+두 변수는 타입과 이름이 같기 때문에 프래그먼트 쉐이더의 <Blue>vertexColor</Blue>는 정점 쉐이더의 <Blue>vertexColor</Blue>와 자동으로 연결됩니다. 
+
+정점 쉐이더에서 색상을 어두운 빨강으로 설정했으므로 최종적으로 생성되는 프래그먼트들도 어두운 빨강색으로 나타나야합니다. 아래 이미지는 
+그 출력 결과를 보여줍니다. 
+
+
+![shaders](./images/getting-started/shaders.png)
+
+보이시나요! 우리는 방금 정점 쉐이더에서 프래그먼트 쉐이더로 값을 전달하는데 성공했습니다. 
+이제 좀더 조미료를 쳐서 애플리케이션에서 프래그먼트 쉐이더로 색상을 전달할수 있는지도 확인해 보죠
+
+### Uniforms 
+<Green>Uniform</Green>은 CPU에 있는 애플리케이션에서 GPU의 쉐이더로 데이터를 전달하는 또 다른 방법 입니다. 
+하지만 uniform은 정점 속성과는 약간 다릅니다. 
+
+<NumberedList>
+    <NumberedItem> Uniform은 <Green>전역(global)</Green> 입니다. 전역 이라는 뜻은, uniform 변수는 쉐이더 프로그램 객체마다 고유하며, 쉐이더 프로그램의 
+    어떤 단계든 접근할 수 있다는 의미입니다 </NumberedItem>
+    <NumberedItem> uniform은 한번 값을 설정하면 그 값은 리셋되거나 업데이트 될 때 까지 유지됩니다. </NumberedItem>
+</NumberedList>
+
+GLSL에서 <Blue>uniform</Blue>를 선언하려면 단순히 uniform 키워드와 함께 타입, 이름을 쉐이더에 추가하면 됩니다. 그 시점부터 쉐이더 안에서 새로 선언한 
+uniform을 사용할 수 있습니다. 
+
+이제 이번에는 uniform을 이용해서 삼각형의 색상을 지정할 수 있는지 확인해 봅시다. 
+
+```glsl 
+#version 330 core
+out vec4 FragColor;
+  
+uniform vec4 ourColor; // we set this variable in the OpenGL code.
+
+void main()
+{
+    FragColor = ourColor;
+}   
+```
+
+우리는 프래그먼트 쉐이더에 <Blue>uniform vec4 outColor </Blue>를 선언했고, 프래그먼트의 출력 색상을 이 uniform의 값으로 설정했습니다. 
+Uniform은 전역 변수이기 때문에 원하는 어떤 쉐이더 단계에서든 정의할 수 있스며, 프래그먼트 쉐이더로 무언가를 전달하기 위해 굳이 
+정점 쉐이더를 거칠 필요가 없습니다. 우리는 이 uniform을 정점 쉐이더에서는 사용하지 않으므로 정점 쉐이더에 따로 정의할 필요도 없습니다. 
+
+
+<Warning>
+만약 GLSL 코드에서 어디에서도 사용하지 않는 uniform을 선언하면 컴파일러는 그 변수를 조용히 제거해 버립니다. 이것 때문에 꽤 골치아픈 오류가 발생하기도 하니 꼭 기억해두세요! 
+</Warning>
+
+현재 uniform은 비어있습니다. 아직 이 uniform에 값을 추가하지 않았기 때문입니다. 
+이제 uniform에 값을 넣어 보겠습니다. 우선 쉐이더 안에서 uniform 속성의 인덱스/위치를 찾아야 합니다. 
+그 위치를 찾은 다음에야 uniform 값을 업데이트 할 수 있습니다. 
+
+단순히 하나의 색상을 프래그먼트 쉐이더에 전달하는 대신, 이번에는 좀더 흥미롭게 시간에 따라 색이 점점 변하도록 만들어 봅시다. 
+
+```cpp
+float timeValue = glfwGetTime();
+float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+glUseProgram(shaderProgram);
+glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+```
+
+우선 우리는 <Func name="glfwGetTime" params='[]' description="GLFW가 초기화된 이후 경과된 시간을 초 단위로 반환합니다." tags={["GLFW"]} />을 사용해 실행 시간을 초 단위로 가져옵니다. 그런다음 <Red>sin</Red> 함수를 사용해 색상을 0.0 ~ 1.0 범위에서 변화시키고 
+그 결과를 <Blue>greenValue</Blue>에 저장합니다. 그 다음 <Func name="glGetUniformLocation" params='[{"name":"program","type":"GLuint","description":"uniform 변수를 포함하는 프로그램 객체"},{"name":"name","type":"const GLchar*","description":"uniform 변수의 이름"}]' description="지정된 프로그램에서 uniform 변수의 위치를 조회합니다. uniform이 존재하지 않거나 사용되지 않으면 -1을 반환합니다." tags={["Shaders"]} />
+을 사용해서 uniform <Blue>ourColor</Blue>의 위치를 조회합니다.
+이 조회 함수에는 쉐이더 프로그램과 위치를 알고싶은 uniform의 이름을 전달합니다. 만약 <Func name="glGetUniformLocation" params='[{"name":"program","type":"GLuint","description":"uniform 변수를 포함하는 프로그램 객체"},{"name":"name","type":"const GLchar*","description":"uniform 변수의 이름"}]' description="지정된 프로그램에서 uniform 변수의 위치를 조회합니다. uniform이 존재하지 않거나 사용되지 않으면 -1을 반환합니다." tags={["Shaders"]} />이 `-1`을 반환한다면, 
+해당 uniform의 위치를 찾을 수 없다는 뜻입니다.
+
+마지막으로 <Func name="glUniform" params='[{"name":"location","type":"GLint","description":"수정할 uniform 변수의 위치"},{"name":"count","type":"GLsizei","description":"벡터 타입인 경우 요소의 개수"},{"name":"value","type":"다양한 타입","description":"벡터 명령의 경우, 업데이트할 지정된 uniform 변수에 사용될 count 값들의 배열에 대한 포인터"}]' description="glUniform 함수는 현재 활성화된 쉐이더 프로그램의 uniform 값을 설정합니다. uniform 위치는 제공되어야 하며 이는 glGetUniformLocation을 사용해서 조회할 수 있습니다. 이 함수는 여러 오버로드된 타입을 가지고 있으며 올바른 타입의 함수를 적절한 접미사(예: i, 3ui, fv 등)로 호출해야 합니다." tags={["Shaders"]} />
+ 함수를 이용용해 uniform 값을 설정할 수 있습니다. 주의할 점은 uniform 위치를 찾을 때는 쉐이더 프로그램을 먼저 활성화 할 필요가 없지만, uniform 값을 업데이트 할 때는 반드시 <Func 
+  name="glUseProgram"
+  params='[{"name":"program","type":"GLuint","description":"사용할 쉐이더 프로그램 객체를 지정합니다. 이 프로그램 객체는 컴파일되고 링크되어야 합니다."}]'
+  description="주어진 프로그램 객체를 현재 활성 쉐이더 프로그램으로 설정하여 후속 그리기 명령에 사용합니다. 0 값이 제공되면 OpenGL은 이전 그리기 패턴으로 되돌아갑니다."
+  example="glUseProgram(shaderProgram); glBindVertexArray(VAO); glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); glBindVertexArray(0);"
+  tags='["Shaders", "Program Usage"]'
+/> 을 호출해 프로그램을 활성화 해야 한다는 것입니다. 왜냐면 uniform 값은 현재 활성화 된 쉐이더 프로그램에 적용되기 때문입니다. 
+
+
