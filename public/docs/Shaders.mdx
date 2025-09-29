@@ -290,7 +290,9 @@ glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
   description="주어진 프로그램 객체를 현재 활성 쉐이더 프로그램으로 설정하여 후속 그리기 명령에 사용합니다. 0 값이 제공되면 OpenGL은 이전 그리기 패턴으로 되돌아갑니다."
   example="glUseProgram(shaderProgram); glBindVertexArray(VAO); glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); glBindVertexArray(0);"
   tags='["Shaders", "Program Usage"]'
-/> 을 호출해 프로그램을 활성화 해야 한다는 것입니다. 왜냐면 uniform 값은 현재 활성화 된 쉐이더 프로그램에 적용되기 때문입니다. 
+/> 을 호출해 프로그램을 활성화 해야 한다는 것입니다. 왜냐면 uniform 값은 현재 활성화 된 쉐이더 프로그램에 적용되기 때문입니다.
+
+
 
 <Info> 
 OpenGL은 근본적으로 C라이브러리이기 때문에, 함수 오버로딩을 네이티브로 지원하지 않습니다. 따라서 하나의 함수가 여러 타입으로 호출될 수 있는 경우,
@@ -347,3 +349,8 @@ while(!glfwWindowShouldClose(window))
 이 코드는 이전 코드에서 비교적 간단히 수정된 버전입니다. 이번에는 삼각형을 그리기 전에 매 프레임마다 uniform 값을 업데이트 해야합니다. 
 만약 uniform을 올바르게 업데이트 했다면, 삼각형의 색상이 초록색에서 검은색으로 점차 변했다가 다시 초록색으로 돌아오는 모습을 볼 수 있을 것입니다. 
 
+<VideoPlayer 
+  src="/images/getting-started/shaders.mp4"
+  title="쉐이더 예제 - 색상 변화"
+  description="uniform 변수를 사용해서 시간에 따라 색상이 변하는 삼각형을 구현하는 예제의 결과 입니다다."
+/> 

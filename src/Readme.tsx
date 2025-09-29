@@ -16,6 +16,8 @@ import { useTheme } from './contexts/ThemeContext';
 import { DirectoryStructure } from './components/DirectoryStructure';
 import { Red, Green, Blue } from './components/ColorText';
 import GiscusComments from './components/GiscusComments';
+import VideoPlayer from './components/VideoPlayer';
+import YouTubeEmbed from './components/YouTubeEmbed';
 const Wrapper = styled.div<{ theme: any }>`
   max-width: 700px;
   margin: 2rem auto;
@@ -58,6 +60,8 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     Red: Red,
     Green: Green,
     Blue: Blue,
+    VideoPlayer: VideoPlayer,
+    YouTubeEmbed: YouTubeEmbed,
     p: (props: any) => <div {...props} style={{ margin: '1em 0' }} />,
     pre: (props: any) => <div {...props} />,
     ul: (props: any) => (
