@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { FiX } from 'react-icons/fi';
 import CodeBlock from './CodeBlock';
@@ -9,6 +10,7 @@ const Container = styled.span<{ theme: any }>`
   display: inline-block;
   margin: 0 4px;
   border-bottom: 1px solid ${props => props.theme.mode === 'dark' ? '#ff6b6b' : '#ef4444'};
+  z-index: 9998;
   
   @media (max-width: 768px) {
     margin: 0 2px;
@@ -49,7 +51,7 @@ const Box = styled.div<{ theme: any; isVisible: boolean }>`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) ${props => props.isVisible ? 'scale(1)' : 'scale(0.9)'};
-  z-index: 1000;
+  z-index: 9999;
   min-width: 320px;
   max-width: 450px;
   opacity: ${props => props.isVisible ? 1 : 0};
@@ -61,6 +63,7 @@ const Box = styled.div<{ theme: any; isVisible: boolean }>`
   };
   color: ${props => props.theme.colors.text};
   pointer-events: ${props => props.isVisible ? 'auto' : 'none'};
+  isolation: isolate;
   
   @media (max-width: 768px) {
     min-width: 280px;
@@ -217,20 +220,62 @@ const FunctionDoc: React.FC<FunctionDocProps> = ({ name, params, description, ex
   
   useEffect(() => {
     const container = containerRef.current;
+    const box = boxRef.current;
+    
     if (container) {
-      container.addEventListener('mouseenter', showTooltip);
-      container.addEventListener('mouseleave', hideTooltip);
+      const handleMouseEnter = () => setIsVisible(true);
+      const handleMouseLeave = (e: MouseEvent) => {
+        // 마우스가 팝업으로 이동하는 경우 숨기지 않음
+        if (box && box.contains(e.relatedTarget as Node)) {
+          return;
+        }
+        setIsVisible(false);
+      };
+      
+      container.addEventListener('mouseenter', handleMouseEnter);
+      container.addEventListener('mouseleave', handleMouseLeave);
       container.addEventListener('focus', showTooltip);
       container.addEventListener('blur', hideTooltip);
       
       return () => {
-        container.removeEventListener('mouseenter', showTooltip);
-        container.removeEventListener('mouseleave', hideTooltip);
+        container.removeEventListener('mouseenter', handleMouseEnter);
+        container.removeEventListener('mouseleave', handleMouseLeave);
         container.removeEventListener('focus', showTooltip);
         container.removeEventListener('blur', hideTooltip);
       };
     }
   }, []);
+
+  useEffect(() => {
+    const box = boxRef.current;
+    
+    if (box) {
+      const handleMouseEnter = () => setIsVisible(true);
+      const handleMouseLeave = () => setIsVisible(false);
+      
+      box.addEventListener('mouseenter', handleMouseEnter);
+      box.addEventListener('mouseleave', handleMouseLeave);
+      
+      return () => {
+        box.removeEventListener('mouseenter', handleMouseEnter);
+        box.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, [isVisible]);
+
+  // ESC 키로 팝업 닫기
+  useEffect(() => {
+    if (isVisible) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setIsVisible(false);
+        }
+      };
+      
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isVisible]);
 
   if (typeof params === 'string') {
     try {
@@ -257,9 +302,11 @@ const FunctionDoc: React.FC<FunctionDocProps> = ({ name, params, description, ex
   }
 
   return (
-    <span style={{ display: 'inline-block' }}>
+    <>
       <Container theme={theme} ref={containerRef}>
         <Title theme={theme}>{name}</Title>
+      </Container>
+      {isVisible && createPortal(
         <Box 
           theme={theme} 
           ref={boxRef}
@@ -307,9 +354,10 @@ const FunctionDoc: React.FC<FunctionDocProps> = ({ name, params, description, ex
               </TagsContainer>
             )}
           </BoxContent>
-        </Box>
-      </Container>
-    </span>
+        </Box>,
+        document.body
+      )}
+    </>
   );
 };
 

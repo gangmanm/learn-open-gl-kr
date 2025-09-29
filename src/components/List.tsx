@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { FiCheckCircle } from 'react-icons/fi';
+import { useTheme } from '../contexts/ThemeContext';
 
 const baseListStyle = css`
   padding-left: 0;
@@ -18,20 +19,16 @@ const StyledOl = styled.ol`
   list-style: none;
 `;
 
-const ListItem = styled.li<{$compact?: boolean}>`
+const ListItem = styled.li<{$compact?: boolean; theme: any}>`
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   padding: ${({$compact}) => $compact ? '0.4rem 1.2rem' : '0.8rem 1.5rem'};
   font-size: ${({$compact}) => $compact ? '1rem' : '1.08rem'};
   border-bottom: 1px solid rgb(110, 111, 111);
-  transition: background 0.15s;
 
   &:last-child {
     border-bottom: none;
-  }
-  &:hover {
-    background: #e0e7ff;
   }
 `;
 
@@ -52,17 +49,18 @@ function List({
   icon,
   compact = false,
 }: ListProps) {
+  const { theme } = useTheme();
   const ListTag = ordered ? StyledOl : StyledUl;
   return (
     <ListTag className={className}>
       {items.map((item, idx) => (
-        <ListItem key={idx} $compact={compact}>
+        <ListItem key={idx} $compact={compact} theme={theme}>
           {icon !== undefined
             ? icon
             : ordered
               ? <span style={{color:'#6366f1', fontWeight:600, minWidth:24}}>{idx+1}.</span>
               : <FiCheckCircle style={{color:'#6366f1', minWidth:24}} />}
-          <span style={{color:'#333'}}>{renderItem ? renderItem(item, idx) : item}</span>
+          <span style={{color: theme.colors.text}}>{renderItem ? renderItem(item, idx) : item}</span>
         </ListItem>
       ))}
     </ListTag>

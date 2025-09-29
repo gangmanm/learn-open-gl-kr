@@ -326,6 +326,8 @@ GLSL에서 벡터는 최대 크기가 4이며 각각의 값은 `vecx,vec y , vec
 과정에서 사용됩니다. 
 
 벡터에 대해서는 이후 장에서 훨씬 더 깊이 다루게 될 것입니다. 
+</Info>
+
 
 정점 쉐이더의 출력을 설정하려면 위치 데이터를 미리 정의된 <Blue>gl_position</Blue> 변수에 대입해야 합니다. 
 이 변수는 내부적으로 `vec4` 타입입니다. <Red>main</Red> 함수가 끝날 때 우리가 <Blue>gl_Position</Blue>에 대입한 값이 
@@ -338,7 +340,7 @@ GLSL에서 벡터는 최대 크기가 4이며 각각의 값은 `vecx,vec y , vec
 전혀 처리하지 않고 단순히 쉐이더 출력으로 넘겨주기만 했기 때문입니다. 실제 애플리케이션에서는 입력 데이터가 이미 
 정규화 장치 좌표(NDC)에 있지 않은 경우가 대부분이므로 , 먼저 입력 데이터를 OpenGL의 가시 영역안에 들어오도록 좌표 변환을 해주어야 합니다. 
 
-</Info>
+
 
 ## Compling a shader 쉐이더 컴파일 하기 
 우리는 정점 쉐이더를 위한 소스코드를 const C string에 저장하여 파일 상단에 놓습니다.
@@ -446,4 +448,334 @@ if(!success)
 프레그먼트 쉐이더는 우리가 삼각형을 그리기위해 필요한 두번째이자 마지막 쉐이더 입니다. 
 프레그먼트 쉐이더는 픽셀의 색상 출력 값을 계산하는 쉐이더입니다. 간단하게 하기위해 우선 프레그먼트 쉐이더가 
 항상 오렌지색 색상을 출력하도록 하겠습니다. 
+
+<Info>
+컴퓨터 그래픽스에서 색상은 보통 4개의 값 배열로 표현됩니다. 빨강, 초록, 파랑,알파(불투명도) 성분입니다. 
+이는 흔히 **RGBA**라고 부릅니다. OpenGL이나 GLSL에서 색상을 정의할 때는 각 성분의 강도를 
+0.0에서 1.0 사이의 값으로 설정합니다. 예를 들어, 빨강을 1.0, 초록을 1.0으로 설정하면 
+두 색상이 섞여서 노란색이 됩니다. 이렇게 세가지 색상 성분을 조합하면 1,600만 가지 이상의 색상을 
+만들어 낼 수 있습니다. 
+
+</Info>
+
+```cpp
+#version 330 core
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+} 
+
+```
+
+프래그먼트 쉐이더(Fragment Shader)는 단 하나의 출력 변수를 필요로 하는데, 이는 최종 색상 출력을 정의하는 
+크기 4의 벡터입니다. 출력값은 `out` 키워드로 설정할 수 있으며 여기서는 <Blue>FragColor</Blue>라는 이름으로 지정하겠습니다. 
+다음으로  vec4값을 색상 출력에 대입했는데 , 이는 알파 값이 1.0(완전 불투명)한 주황색 입니다. 
+
+프레그먼트 쉐이더를 컴파일하는 과정은 정점 쉐이더와 유사하지만, 이때는 쉐이더 타입으로 <Blue>GL_FRAGMENT_SHADER</Blue> 
+상수를 사용합니다. 
+
+```cpp
+unsigned int fragmentShader;
+fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+glCompileShader(fragmentShader);
+
+``` 
+
+두개의 쉐이더가 이제 컴파일 되었으니 남은 일은 두개의 쉐이더 객체를 <Green>쉐이더 프로그램(Shader Program)</Green>에 
+연결하는 것입니다. 여기서도 컴파일 에러를 확인하는 것을 잊지마세요! 
+
+
+## Shader Program 쉐이더 프로그램 
+
+쉐이더 프로그램(Shader Program) 객체는 여러 쉐이더들을 합쳐서 마지막으로 연결하는 것입니다. 
+우리가 방금 컴파일한 쉐이더를 사용하려면 그것들을 쉐이더 프로그램 객체에 링크한 뒤, 렌더링 시 이 쉐이더 프로그램을 활성화 해야합니다. 
+활성화된 쉐이더 프로그램의 쉐이더들이 우리가 렌더 호출을 했을 때 사용됩니다. 
+
+쉐이더를 하나의 프로그램으로 링크할 때, 각 쉐이더의 출력은 다음 쉐이더의 입력과 연결됩니다. 만약 출려과 입력이 일치하지 않으면
+이 단계에서 링크 오류가 발생합니다. 
+
+프로그램 객체를 만드는 것은 간단합니다. 
+
+```cpp
+unsigned int shaderProgram;
+shaderProgram = glCreateProgram();
+```
+
+<Func 
+  name="glCreateProgram"
+  params='[]'
+  description="프로그램 객체를 생성하고 해당 프로그램 객체에 대한 고유한 참조 ID를 반환합니다. 프로그램 객체는 쉐이더들을 연결하고 링크하는 데 사용됩니다. 오류가 발생하면 0을 반환합니다."
+  example="unsigned int shaderProgram = glCreateProgram();"
+  tags='["Shaders", "Program Objects"]'
+/> 함수는 프로그램을 생성하여 최근에 생성된 프로그램 객체의 ID참조를 반환합니다. 우리는 이제 
+이전에 컴파일된 쉐이더들을 프로그램 객체에 붙이고 <Func 
+  name="glLinkProgram"
+  params='[{"name":"program","type":"GLuint","description":"링크할 프로그램 객체를 지정합니다."}]'
+  description="연결된 모든 쉐이더를 하나의 최종 쉐이더 프로그램 객체로 링크합니다. 링크 단계에서 각 출력이 각 쉐이더의 입력과 일치하는지 확인하고, 일치하지 않으면 링크가 실패합니다."
+  example="glLinkProgram(shaderProgram);"
+  tags='["Shaders", "Program Linking"]'
+/>으로 이들을 연결합니다. 
+
+```cpp
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);
+``` 
+
+코드는 매우 직관적입니다. 우리는 쉐이더들을 프로그램에 붙인 뒤에  <Func 
+  name="glLinkProgram"
+  params='[{"name":"program","type":"GLuint","description":"링크할 프로그램 객체를 지정합니다."}]'
+  description="연결된 모든 쉐이더를 하나의 최종 쉐이더 프로그램 객체로 링크합니다. 링크 단계에서 각 출력이 각 쉐이더의 입력과 일치하는지 확인하고, 일치하지 않으면 링크가 실패합니다."
+  example="glLinkProgram(shaderProgram);"
+  tags='["Shaders", "Program Linking"]'
+/> 을 통해 그것들을 연결합니다. 
+
+
+<Info>
+Shader 컴파일때처럼 우리는 쉐이더 프로그램의 링킹의 실패도 체크해야합니다. 그리고 에러 로그를 반환해야 합니다. 
+<Func 
+  name="glGetShaderiv"
+  params='[{"name":"shader","type":"GLuint","description":"쿼리할 쉐이더 객체를 지정합니다."},{"name":"pname","type":"GLenum","description":"객체 파라미터를 지정합니다. GL_SHADER_TYPE, GL_DELETE_STATUS, GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH, GL_SHADER_SOURCE_LENGTH 등이 있습니다."},{"name":"params","type":"GLint*","description":"요청된 객체 파라미터를 반환할 GLint 배열의 포인터입니다."}]'
+  description="쉐이더 객체에 대한 정보를 쿼리할 수 있게 해주는 함수입니다. 개발자가 쉐이더 객체의 다양한 속성과 상태를 확인할 수 있습니다."
+  example="GLint success;\nglGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);\n\n// 다른 정보들도 확인 가능\nGLint logLength;\nglGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);"
+  tags='["Shaders", "Query"]'/> 와 <Func 
+  name="glGetShaderInfoLog"
+  params='[{"name":"shader","type":"GLuint","description":"정보 로그를 쿼리할 쉐이더 객체를 지정합니다."},{"name":"maxLength","type":"GLsizei","description":"반환된 정보 로그를 저장할 문자 버퍼의 크기를 지정합니다."},{"name":"length","type":"GLsizei*","description":"infoLog에 반환된 문자열의 길이를 반환합니다 (null terminator 제외). NULL이면 길이를 반환하지 않습니다."},{"name":"infoLog","type":"GLchar*","description":"정보 로그를 반환하는 데 사용되는 문자 배열을 지정합니다."}]'
+  description="쉐이더 객체의 정보 로그를 반환합니다. 정보 로그에는 쉐이더 컴파일과 관련된 정보가 포함됩니다. 쉐이더 컴파일이 실패하면 컴파일 타임 오류를 확인하기 위해 쉐이더의 정보 로그를 확인하는 것이 좋습니다."
+  example="char infoLog[512]; glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);"
+  tags='["Shaders", "Error Handling"]'/> 대신 이번에는 아래처럼 사용합니다. 
+
+  ```cpp 
+glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+if(!success) {
+    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    ...
+}
+```
+</Info> 
+
+
+프로그램 객체의 결과는 <Func 
+  name="glUseProgram"
+  params='[{"name":"program","type":"GLuint","description":"사용할 쉐이더 프로그램 객체를 지정합니다. 이 프로그램 객체는 컴파일되고 링크되어야 합니다."}]'
+  description="주어진 프로그램 객체를 현재 활성 쉐이더 프로그램으로 설정하여 후속 그리기 명령에 사용합니다. 0 값이 제공되면 OpenGL은 이전 그리기 패턴으로 되돌아갑니다."
+  example="glUseProgram(shaderProgram); glBindVertexArray(VAO); glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); glBindVertexArray(0);"
+  tags='["Shaders", "Program Usage"]'
+/>을 통해 활성화할 수 있습니다. 
+이때 새로 생성된 프로그램 객체를 인자로 넘겨줍니다. 
+
+```cpp 
+glUseProgram(shaderProgram);
+```
+ <Func 
+  name="glUseProgram"
+  params='[{"name":"program","type":"GLuint","description":"사용할 쉐이더 프로그램 객체를 지정합니다. 이 프로그램 객체는 컴파일되고 링크되어야 합니다."}]'
+  description="주어진 프로그램 객체를 현재 활성 쉐이더 프로그램으로 설정하여 후속 그리기 명령에 사용합니다. 0 값이 제공되면 OpenGL은 이전 그리기 패턴으로 되돌아갑니다."
+  example="glUseProgram(shaderProgram); glBindVertexArray(VAO); glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); glBindVertexArray(0);"
+  tags='["Shaders", "Program Usage"]'
+/>이후의 모든 쉐이더와 렌더링 콜은 이제 이 프로그램 객체를 사용할 것입니다. 
+
+아 그리고 잊지말아야할게 있습니다. 바로 쉐이더 객체들을 프로그램 객체에 연결한 후에는 더이상 필요하지 않으니 삭제해야합니다. 
+
+```cpp 
+
+glDeleteShader(vertexShader);
+glDeleteShader(fragmentShader);
+
+``` 
+
+지금까지 우리는 입력 정점 데이터를 GPU에 전송했고, GPU가 정점과 프래그먼트 쉐이더에서 정점 데이터를 어떻게 처리해야하는지 지시했습니다. 
+거의 다 왔지만 아직 한가지가 남아있습니다. OpenGL은 현재 메모리에 있는 정점 데이터를 어떻게 해석해야 하는지, 그리고 
+이 데이터를 정점 쉐이더의 어떤 속성(attribute)에 연결해야하는지 알지 못합니다. 이제 우리가 OpenGL에게 그것을 알려줘야합니다. 
+
+## Linking Vertex Attributes 정점 속성 연결 
+
+정점 쉐이더는 정점 속성(vertex Attribute) 형태로 원하는 입력을 자유롭게 지정할 수 있습니다. 이는 큰 유연성을 제공하지만,
+동시에 우리가 입력 데이터의 어떤 부분이 정점 쉐이더의 어떤 속성에 대응되는지를 직접 지정해야한다는 뜻이기도 합니다. 
+즉 렌더링 하기 전에 OpenGL이 정점 데이터를 어떻게 해석해야 하는지 우리가 명시해야합니다. 
+
+우리의 정점 버퍼 데이터는 다음과 같은 형식으로 되어 있습니다. 
+
+![vertex_attribute_pointer](./images/getting-started/vertex_attribute_pointer.png)
+
+
+- 위치 데이터는 32-bit(4 byte) float 점 형태로 저장됩니다. 
+- 각 위치(Position)은 이러한 값 3개로 이루어져 있습니다. 
+- 각 3개 값의 집합 사이에는 다른 값이나 빈 공간이 없습니다. 배열 안에서 값들이 연속적으로 저장되어 있습니다. 
+- 데이터의 첫번째 값은 버퍼의 맨앞에서 시작합니다. 
+
+이 정보를 바탕으로, 우리는 <Func 
+  name="glVertexAttribPointer"
+  params='[{"name":"index","type":"GLuint","description":"정점 속성의 인덱스를 지정합니다."},{"name":"size","type":"GLint","description":"정점 속성당 구성 요소의 수를 지정합니다. 1, 2, 3, 4 중 하나여야 합니다."},{"name":"type","type":"GLenum","description":"배열의 각 구성 요소의 데이터 타입을 지정합니다. GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_INT, GL_UNSIGNED_INT, GL_FLOAT, GL_DOUBLE 등이 있습니다."},{"name":"normalized","type":"GLboolean","description":"데이터가 정규화되어야 하는지 지정합니다. 정수 값의 경우 0에서 1 범위(부호 없는 값) 또는 -1에서 1 범위(부호 있는 값)로 매핑됩니다."},{"name":"stride","type":"GLsizei","description":"연속된 정점 속성 사이의 바이트 오프셋을 지정합니다. 정점 속성이 밀접하게 패킹되어 있으면 0을 사용할 수 있습니다."},{"name":"pointer","type":"const GLvoid*","description":"배열의 첫 번째 구성 요소의 첫 번째 정점 속성에 대한 오프셋을 지정합니다."}]'
+  description="그리기 호출이 이루어질 때마다 정점 버퍼 데이터를 어떻게 해석해야 하는지 지정합니다. 해석 지정은 현재 바인딩된 정점 배열 객체에 저장되며 일부 상태 변경 시까지 유효합니다."
+  example="glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);"
+  tags='["Vertex Attributes", "Buffer Management"]'
+/>를 사용하여 OpenGL에게 정점 데이터를 정점 속성 단위로 어떻게 해석해야 하는지 알려줄 수 있습니다. 
+
+```cpp 
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);  
+
+```
+<Func 
+  name="glVertexAttribPointer"
+  params='[{"name":"index","type":"GLuint","description":"정점 속성의 인덱스를 지정합니다."},{"name":"size","type":"GLint","description":"정점 속성당 구성 요소의 수를 지정합니다. 1, 2, 3, 4 중 하나여야 합니다."},{"name":"type","type":"GLenum","description":"배열의 각 구성 요소의 데이터 타입을 지정합니다. GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_INT, GL_UNSIGNED_INT, GL_FLOAT, GL_DOUBLE 등이 있습니다."},{"name":"normalized","type":"GLboolean","description":"데이터가 정규화되어야 하는지 지정합니다. 정수 값의 경우 0에서 1 범위(부호 없는 값) 또는 -1에서 1 범위(부호 있는 값)로 매핑됩니다."},{"name":"stride","type":"GLsizei","description":"연속된 정점 속성 사이의 바이트 오프셋을 지정합니다. 정점 속성이 밀접하게 패킹되어 있으면 0을 사용할 수 있습니다."},{"name":"pointer","type":"const GLvoid*","description":"배열의 첫 번째 구성 요소의 첫 번째 정점 속성에 대한 오프셋을 지정합니다."}]'
+  description="그리기 호출이 이루어질 때마다 정점 버퍼 데이터를 어떻게 해석해야 하는지 지정합니다. 해석 지정은 현재 바인딩된 정점 배열 객체에 저장되며 일부 상태 변경 시까지 유효합니다."
+  example="glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);"
+  tags='["Vertex Attributes", "Buffer Management"]'
+/> 함수는 꽤 몇가지의 매개변수들을 가지고 있습니다. 그러니 천천히 그것들을 살펴 봅시다. 
+
+<NumberedList>
+<NumberedItem>**첫번째 매개변수** 는 어떤 정점 속성(vertex attribvute)을 설정할지 지정합니다. 정점 쉐이더에서 `layout(location = 0)`으로 위치 속성의 로케이션을 0으로 지정했으므로, 여기에 0을 넣어 그 속성에 데이터를 전달합니다.</NumberedItem>
+<NumberedItem>**두번째 인자** 는 정점 속성의 크기입니다. 위치 속성은 `vec3`이므로 값 3개로 이뤄져 3을 넣습니다.</NumberedItem>
+<NumberedItem>**세번째 인자** 는 데이터의 타입입니다. 우리는 부동소수점이므로 `GL_FLOAT`을 씁니다. (GLSL의 `vec*`는 float들로 구성)</NumberedItem>
+<NumberedItem>**네번째 인자** 는 정규화 여부입니다. 만약 정수형(int, byte 등) 데이터를 넣고 이 값을 `GL_TRUE`로 하면, float로 변환될 때 0(부호가 있으면 -1)~1 범위로 정규화됩니다. 지금은 해당 없음 → `GL_FALSE`.</NumberedItem>
+<NumberedItem>**다섯번째 인자(stride)** 는 연속한 정점 속성 사이의 바이트 간격입니다. 다음 위치 데이터까지의 거리가 float 3개의 크기이므로 그 값을 넣습니다. 배열이 타이트하게(packed) 붙어 있음을 알고 있다면, 0을 줘서 OpenGL이 자동으로 계산하게 할 수도 있습니다(값들이 촘촘히 붙어 있을 때만).</NumberedItem>
+<NumberedItem>**마지막 인자** 는 `void*` 타입의 오프셋(바이트 단위)으로, 버퍼 안에서 해당 속성 데이터가 시작되는 위치입니다. 위치 데이터가 배열의 맨 앞에서 시작하므로 0입니다. 이 파라미터는 나중에 더 자세히 다룹니다.</NumberedItem>
+</NumberedList>
+
+
+<Info>
+각 정점 속성(Vertex Attribute)는 VBO가 관리하는 메모리에서 데이터를 가져오며 어떤 VBO에서 데이터를 가져올지는 (여러개의 VBO를 가지고 있을 수 있으므로로) <Func 
+  name="glVertexAttribPointer"
+  params='[{"name":"index","type":"GLuint","description":"정점 속성의 인덱스를 지정합니다."},{"name":"size","type":"GLint","description":"정점 속성당 구성 요소의 수를 지정합니다. 1, 2, 3, 4 중 하나여야 합니다."},{"name":"type","type":"GLenum","description":"배열의 각 구성 요소의 데이터 타입을 지정합니다. GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_INT, GL_UNSIGNED_INT, GL_FLOAT, GL_DOUBLE 등이 있습니다."},{"name":"normalized","type":"GLboolean","description":"데이터가 정규화되어야 하는지 지정합니다. 정수 값의 경우 0에서 1 범위(부호 없는 값) 또는 -1에서 1 범위(부호 있는 값)로 매핑됩니다."},{"name":"stride","type":"GLsizei","description":"연속된 정점 속성 사이의 바이트 오프셋을 지정합니다. 정점 속성이 밀접하게 패킹되어 있으면 0을 사용할 수 있습니다."},{"name":"pointer","type":"const GLvoid*","description":"배열의 첫 번째 구성 요소의 첫 번째 정점 속성에 대한 오프셋을 지정합니다."}]'
+  description="그리기 호출이 이루어질 때마다 정점 버퍼 데이터를 어떻게 해석해야 하는지 지정합니다. 해석 지정은 현재 바인딩된 정점 배열 객체에 저장되며 일부 상태 변경 시까지 유효합니다."
+  example="glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);"
+  tags='["Vertex Attributes", "Buffer Management"]'
+/>를 호출할때 <Blue>GL_ARRAY_BUFFER</Blue>에 현재 바인딩된 VBO에 의해 결정됩니다. 즉 우리가 <Red>glVertexArrayPointer</Red>를 
+호출하기 전에 이미 정의해둔 VBO가 여전히 바인딩 되어 있으므로, 정점 속성 location = 0 은 이제 그 VBO의 정점 데이터와 연결됩니다. 
+
+</Info> 
+
+
+<TranslatorNote type="clarification" author="이도경" collapsible={true} defaultOpen={false}>
+
+#### 슬롯(location) 이란? 
+역할: 정점 데이터(VBO)의 특정 부분을 -> 쉐이더의 입력 변수에 연결하는 번호표 
+
+예시 
+```cpp
+layout (location = 0) in vec3 aPos;    // 위치 → 슬롯 0
+layout (location = 1) in vec3 aColor;  // 색상 → 슬롯 1
+```
+
+즉 슬롯(location)  = "VBO 데이터와 쉐이더 변수를 연결하는 번호" 
+
+</TranslatorNote> 
+
+이제 OpenGL이 정점 데이터를 어떻게 해석해야하는지 지정했으니, <Func 
+  name="glEnableVertexAttribArray"
+  params='[{"name":"index","type":"GLuint","description":"활성화할 정점 속성의 인덱스를 지정합니다."}]'
+  description="일반 정점 속성을 활성화합니다. 정점 속성은 glDisableVertexAttribArray를 호출하여 비활성화할 수 있습니다."
+  example="glEnableVertexAttribArray(0);"
+  tags='["Vertex Attributes"]'
+/>를 사용해 정점 속성을 활성화 해야합니다. 이 함수에는 정점 속성의 location(슬롯) 값을 인자로 전달합니다. (정점 속성은 기본적으로 비활성화 상태입니다.)
+그 시점부터 우리는 모든 설정을 완료한 것입니다.
+
+- 정점 버퍼 객체(VBO)를 이용해 버퍼에 정점 데이터를 초기화 했고 
+- 정점 쉐이더와 프래그먼트 쉐이더를 설정했으며 
+- OpenGL에게 정점 데이터를 정점 쉐이더의 정점 속성과 어떻게 연결해야하는지 알려주었습니다. 
+
+이제 OpenGL에서 객체를 그리는 코드는 다음과 같이 보이게 됩니다. 
+
+```cpp 
+
+// 0. OpenGL이 사용할 수 있도록 정점 배열을 버퍼에 복사
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+// 1. 정점 속성 포인터 설정
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);  
+// 2. 객체를 렌더링할 때 쉐이더 프로그램 사용
+glUseProgram(shaderProgram);
+// 3. 이제 객체 그리기
+someOpenGLFunctionThatDrawsOurTriangle();   
+```
+
+우리는 어떤 객체를 그릴 때마다 이 과정을 반복해야 합니다. 지금은 별로 많아 보이지 않을 수 있지만, 정점 속성이 5개 이상이고 
+객체가 수백 개나 된다면(이는 흔한 일입니다.) 각 객체마다 적절한 버퍼 객체를 바인딩하고 모든 정점 속성을 설정하는 일은 
+금방 번거로운 작업이 됩니다. 
+
+만약 이 모든 상태 설정을 하나의 객체에 저장해 두고 , 그 객체를 단순히 바인딩 하는 것만으로 해당 상태를 가져올 수 있다면 어떨까요? 
+
+## Vertex Array Object 정점 배열 객체 
+
+<Green> 정점 배열 객체 (vertex array object) VAO </Green>는 정점 버퍼 객체(VBO) 처럼 바인딩 할 수 있으며, 그 ㅈ시점
+이후의 모든 정점 속성 호출들은 VAO안에 저장됩니다. 이렇게 하면 정점 속성 포인터를 설정할 때 단 한번ㅁ나 호출하면 되고, 객체를 그릴때는 
+해당 VAO만 바인딩 하면 됩니다. 즉 서로 다른 정점 데이터와 속성 구성을 전환하는 일이 단순히 다른 
+VAO를 바인딩하는 것 만큼 쉬워집니다. 지금까지 설정 했던 모든 상태가 VAO에 저장되기 때문입니다. 
+
+<Warning>
+코어 OpenGL은 VAO를 사용하는 것을 필요로 합니다. 우리가 정점 입력값으로 어떤 일을 할지 알게하기 위해서입니다. 
+만약에 VAO를 바인딩하는 것에 실패한다면  OpenGL은 무언가를 그리는 것을 거부할 수 있습니다. 
+</Warning> 
+
+정점 배열 객체(VAO)는 다음들을 저장합니다. 
+
+- <Func 
+    name="glEnableVertexAttribArray"
+    params='[{"name":"index","type":"GLuint","description":"활성화할 정점 속성의 인덱스를 지정합니다."}]'
+    description="일반 정점 속성을 활성화합니다. 정점 속성은 glDisableVertexAttribArray를 호출하여 비활성화할 수 있습니다."
+    example="glEnableVertexAttribArray(0);"
+    tags='["Vertex Attributes"]'
+  /> 또는 <Red>glDisableVertexAttribArray</Red> 호출
+- <Func 
+  name="glVertexAttribPointer"
+  params='[{"name":"index","type":"GLuint","description":"정점 속성의 인덱스를 지정합니다."},{"name":"size","type":"GLint","description":"정점 속성당 구성 요소의 수를 지정합니다. 1, 2, 3, 4 중 하나여야 합니다."},{"name":"type","type":"GLenum","description":"배열의 각 구성 요소의 데이터 타입을 지정합니다. GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_INT, GL_UNSIGNED_INT, GL_FLOAT, GL_DOUBLE 등이 있습니다."},{"name":"normalized","type":"GLboolean","description":"데이터가 정규화되어야 하는지 지정합니다. 정수 값의 경우 0에서 1 범위(부호 없는 값) 또는 -1에서 1 범위(부호 있는 값)로 매핑됩니다."},{"name":"stride","type":"GLsizei","description":"연속된 정점 속성 사이의 바이트 오프셋을 지정합니다. 정점 속성이 밀접하게 패킹되어 있으면 0을 사용할 수 있습니다."},{"name":"pointer","type":"const GLvoid*","description":"배열의 첫 번째 구성 요소의 첫 번째 정점 속성에 대한 오프셋을 지정합니다."}]'
+  description="그리기 호출이 이루어질 때마다 정점 버퍼 데이터를 어떻게 해석해야 하는지 지정합니다. 해석 지정은 현재 바인딩된 정점 배열 객체에 저장되며 일부 상태 변경 시까지 유효합니다."
+  example="glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);"
+  tags='["Vertex Attributes", "Buffer Management"]'
+  />를 통한 정점 속성 설정
+- glVertexAttribPointer 호출에 의해 정점 속성과 연결된 정점 버퍼 객체
+
+![vertex_array_objects](./images/getting-started/vertex_array_objects.png)
+
+VAO를 생성하는 절차는 VBO 생성 절차와 유사합니다. 
+
+```cpp
+unsigned int VAO;
+glGenVertexArrays(1, &VAO);  
+```
+VAO를 사용하기 위해서는 VAO를 <Func 
+  name="glBindVertexArray"
+  params='[{"name":"array","type":"GLuint","description":"바인딩할 VAO를 지정합니다."}]'
+  description="정점 배열 객체를 바인딩합니다. 이후의 모든 VBO, EBO, glVertexAttribPointer 및 glEnableVertexAttribArray 호출이 현재 바인딩된 VAO 내부에 저장됩니다."
+  example="glBindVertexArray(VAO);"
+  tags='["Vertex Arrays", "OpenGL State"]'
+/>를 이용해 바인딩해야합니다. 
+그 시점에서 우리는 해당 VBO와 정점 속성 포인터를 바인딩/설정 한뒤, 나중을 위해 VAO를 언바인딩 하면 됩니다. 
+어떤 객체를 그리려고 할 때는 단순히 원하는 설정이 저장된 VBO를 바인딩하고 나서 그리기(draw) 호출을 하면 끝입니다. 
+코드로 표현하면 대략 다음과 같습니다. 
+
+```cpp
+// ..:: Initialization code (done once (unless your object frequently changes)) :: ..
+// 1. bind Vertex Array Object
+glBindVertexArray(VAO);
+// 2. copy our vertices array in a buffer for OpenGL to use
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+// 3. then set our vertex attributes pointers
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);  
+
+  
+[...]
+
+// ..:: Drawing code (in render loop) :: ..
+// 4. draw the object
+glUseProgram(shaderProgram);
+glBindVertexArray(VAO);
+someOpenGLFunctionThatDrawsOurTriangle();   
+```
+
+이제 끝입니다! 우리가 한 모든 일들이 이순간을 위해 이루어진 것입니다/ VAO는 우리의 정점 속성 구성과 
+사용할 VBO를 저장합니다. 보통 여러 객체를 그려야 할 때는, 먼저 VAO(그리고 필요한 VBO 정점 속성 포인터)를 생성/설정해
+두고 나중을 위해 저장해 둡니다. 그리고 특정 객체를 그리려는 순간, 해당 VAO를 가져와서 바인딩 하고, 객체를 그린뒤 
+다시 VAO를 언 바인딩 하면 됩니다. 
+
+
+## 드디어 기다렸던 삼각형!
 

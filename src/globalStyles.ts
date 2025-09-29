@@ -131,17 +131,76 @@ const GlobalStyle = createGlobalStyle`
     color: #333333 !important;
   }
 
-  /* 다크모드에서 리스트 호버 효과 */
-  [data-theme="dark"] ul li:hover {
-    background-color: #1a365d !important;
-    transform: translateX(4px);
+  /* 모든 리스트 호버 효과 강제 차단 - 최강 버전 */
+  * ul li:hover,
+  * ol li:hover,
+  * li:hover,
+  ul li:hover,
+  ol li:hover,
+  li:hover,
+  div ul li:hover,
+  div ol li:hover,
+  div li:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    transform: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
   }
 
-  /* 라이트모드에서 리스트 호버 효과 */
-  [data-theme="light"] ul li:hover {
-    background-color: #e3f2fd !important;
-    transform: translateX(4px);
+  /* 모든 테마에서 리스트 호버 효과 차단 */
+  [data-theme="dark"] * ul li:hover,
+  [data-theme="dark"] * ol li:hover,
+  [data-theme="dark"] * li:hover,
+  [data-theme="dark"] ul li:hover,
+  [data-theme="dark"] ol li:hover,
+  [data-theme="light"] * ul li:hover,
+  [data-theme="light"] * ol li:hover,
+  [data-theme="light"] * li:hover,
+  [data-theme="light"] ul li:hover,
+  [data-theme="light"] ol li:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
   }
+
+  /* 브라우저 기본 스타일 차단 */
+  ul, ol, li {
+    list-style: none !important;
+  }
+
+  ul li, ol li, li {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* 모든 상태에서 호버 효과 차단 */
+  ul li:hover,
+  ul li:focus,
+  ul li:active,
+  ol li:hover,
+  ol li:focus,
+  ol li:active,
+  li:hover,
+  li:focus,
+  li:active {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    transform: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+  }
+
 `;
 
 export default GlobalStyle;
