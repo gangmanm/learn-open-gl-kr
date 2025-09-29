@@ -138,9 +138,9 @@ const ChevronIcon = styled.div<{ isOpen: boolean }>`
 `;
 
 const Content = styled.div<{ theme: any; isOpen: boolean }>`
-  max-height: ${props => props.isOpen ? '1000px' : '0'};
-  overflow: hidden;
-  transition: max-height 0.3s ease;
+  max-height: ${props => props.isOpen ? '9999px' : '0'};
+  overflow: ${props => props.isOpen ? 'visible' : 'hidden'};
+  transition: max-height 0.35s ease;
 `;
 
 const ContentInner = styled.div<{ theme: any }>`
