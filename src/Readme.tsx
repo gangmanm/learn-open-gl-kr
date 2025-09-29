@@ -150,21 +150,20 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
           <code 
             {...props} 
             style={{
-              background: theme.mode === 'dark' ? '#2d3748' : '#f7fafc',
-              padding: '3px 8px',
-              borderRadius: '6px',
+              background: theme.mode === 'dark' ? '#1f2937' : '#f3f4f6',
+              padding: '2px 6px',
+              borderRadius: '4px',
               fontFamily: '"Fira Code", "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace',
-              fontSize: '0.875em',
-              color: theme.mode === 'dark' ? '#e2e8f0' : '#2d3748',
-              border: `1px solid ${theme.mode === 'dark' ? '#4a5568' : '#e2e8f0'}`,
-              fontWeight: '600',
-              letterSpacing: '0.025em',
+              fontSize: '0.85em',
+              color: theme.mode === 'dark' ? '#e5e7eb' : '#111827',
+              border: `1px solid ${theme.mode === 'dark' ? '#374151' : '#e5e7eb'}`,
+              fontWeight: 500,
+              letterSpacing: 0,
               whiteSpace: 'nowrap',
               display: 'inline-block',
-              lineHeight: '1.4',
-              boxShadow: theme.mode === 'dark' 
-                ? '0 1px 3px rgba(0, 0, 0, 0.3)' 
-                : '0 1px 3px rgba(0, 0, 0, 0.1)',
+              lineHeight: '1.3',
+              boxShadow: 'none',
+              textShadow: 'none',
               ...props.style
             }}
           />
