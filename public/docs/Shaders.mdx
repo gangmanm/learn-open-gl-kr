@@ -1,0 +1,15 @@
+# Shaders 쉐이더 
+
+<LinkBlock url="https://learnopenglkr.com/#hellotriangle" text="Hello Triangle"/> 챕터에서 
+언급했듯이, 쉐이더는 GPU에 위치하는 작은 프로그램들 입니다. 이 프로그램들은 
+그래픽스 파이프라인(Graphics Pipeline)의 각각의 특정 영역에서 돌아갑니다. 
+기본적으로 쉐이더는 입력값(inputs)을 출력값(outputs)으로 바꾸는 것 그 이상도 이하도 아닙니다. 
+쉐이더들은 또한 독립적인 프로그램입니다. 그 말은 서로 소통할 수 없다는 의미입니다. 
+그들이 서로 소통할 수 있는 유일한 방법은 그들의 입력값과 출력값 뿐입니다. 
+
+이전 장에서 우리는 쉐이더에 대해 겉햝기를 했습니다. 그리고 어떻게 그들을 적절히 사용할 수 있는지 배웠죠
+이제는 쉐이더에 대해 더 설명할 차례입니다. 정확히는 OpenGL 쉐이딩 언어(OpenGL Shading Languaue)에 대해 말이죠 
+
+# GLSL 
+
+쉐이더들은 C 언어와 같은 언어인 GLSL로 작성됩니다. 

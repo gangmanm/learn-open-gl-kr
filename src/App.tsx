@@ -84,7 +84,7 @@ const DOC_MAP: Record<string, string> = {
   creatingawindow: 'creatingawindow',
   hellowindow: 'HelloWindow',
   hellotriangle: 'HelloTriangle',
-  opengl_tutorial_4: 'opengl_tutorial_4',
+  shaders: 'Shaders',
   opengl_tutorial_5: 'opengl_tutorial_5',
   opengl_tutorial_6: 'opengl_tutorial_6',
   opengl_tutorial_7: 'opengl_tutorial_7',
