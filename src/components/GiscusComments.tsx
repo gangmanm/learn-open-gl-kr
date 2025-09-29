@@ -50,26 +50,6 @@ const GiscusComments: React.FC<GiscusCommentsProps> = ({
           lang={lang}
           loading={loading}
         />
-        <div style={{ 
-          marginTop: '1rem', 
-          padding: '1rem', 
-          backgroundColor: theme.mode === 'dark' ? '#2d3748' : '#f7fafc',
-          borderRadius: '8px',
-          fontSize: '0.875rem',
-          color: theme.mode === 'dark' ? '#a0aec0' : '#4a5568'
-        }}>
-          <p><strong>giscus 설정 정보:</strong></p>
-          <p>저장소: {repo}</p>
-          <p>매핑: {mapping}</p>
-          <p>카테고리: {category}</p>
-          <p>언어: {lang}</p>
-          <p><strong>다음 단계:</strong></p>
-          <ol style={{ marginLeft: '1rem' }}>
-            <li>https://giscus.app/ko 에서 저장소 입력</li>
-            <li>올바른 repo-id와 category-id 복사</li>
-            <li>설정 업데이트</li>
-          </ol>
-        </div>
       </div>
     );
   } catch (error) {
