@@ -1,0 +1,31 @@
+# Gitcus Configuration for learn-open-gl-kr
+
+# Repository settings
+repo: dklee/learn-open-gl-kr
+repo-id: R_kgDONTqhJg
+category: General
+category-id: DIC_kwDONTqhJs4Ck4Yz
+
+# Display settings
+mapping: pathname
+strict: 1
+reactions-enabled: 1
+emit-metadata: 0
+
+# Theme settings
+theme: preferred_color_scheme
+lang: ko
+
+# Input settings
+input-position: top
+loading: lazy
+
+# Comment settings
+anonymous: 0
+
+# Additional settings for Korean documentation site
+# - Uses pathname mapping for per-page comments
+# - Korean language support
+# - Top input position for better UX
+# - Reactions enabled for user engagement
+# - Lazy loading for performance

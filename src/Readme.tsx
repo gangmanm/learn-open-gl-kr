@@ -15,6 +15,7 @@ import Collapsible from './components/Collapsible';
 import { useTheme } from './contexts/ThemeContext';
 import { DirectoryStructure } from './components/DirectoryStructure';
 import { Red, Green, Blue } from './components/ColorText';
+import GiscusComments from './components/GiscusComments';
 const Wrapper = styled.div<{ theme: any }>`
   max-width: 700px;
   margin: 2rem auto;
@@ -207,6 +208,20 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
       <MDXProvider components={components}>
         <MDXComponent />
       </MDXProvider>
+      <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: `1px solid ${theme.colors.border}` }}>
+        <GiscusComments
+          repo="gangmanm/learn-open-gl-kr"
+          repoId="R_kgDOPFBMZQ"
+          category="General"
+          categoryId="DIC_kwDOPFBMZc4CwBGG"
+          mapping="pathname"
+          reactionsEnabled={true}
+          emitMetadata={false}
+          inputPosition="bottom"
+          lang="ko"
+          loading="lazy"
+        />
+      </div>
     </Wrapper>
   );
 };

@@ -26,6 +26,7 @@ const ListItem = styled.li<{$compact?: boolean; theme: any}>`
   padding: ${({$compact}) => $compact ? '0.4rem 1.2rem' : '0.8rem 1.5rem'};
   font-size: ${({$compact}) => $compact ? '1rem' : '1.08rem'};
   border-bottom: 1px solid ${props => props.theme.colors.border};
+  color: ${props => props.theme.colors.text};
 
   &:last-child {
     border-bottom: none;
