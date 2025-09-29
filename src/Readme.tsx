@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { MDXProvider } from '@mdx-js/react';
 import * as runtime from 'react/jsx-runtime';
@@ -46,7 +46,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
   const [error, setError] = useState<string | null>(null);
   const [MDXComponent, setMDXComponent] = useState<React.ComponentType | null>(null);
 
-  const components = { 
+  const components = useMemo(() => ({ 
     Func: FunctionDoc,
     Warning: WarningBlock,
     Info: InfoBlock,
@@ -72,62 +72,73 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
           padding: '0 0 0 1.5rem',
           margin: '1em 0',
           color: theme.colors.text,
+          transition: 'color 0.3s ease',
           ...props.style
         }}
       />
     ),
-    li: (props: any) => (
-      <li 
-        {...props} 
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '0.5rem',
-          padding: '0.5rem 0.75rem',
-          fontSize: '1rem',
-          lineHeight: '1.6',
-          color: theme.colors.text + ' !important',
-          borderRadius: '6px',
-          margin: '0.2rem 0',
-          transition: 'all 0.2s ease',
-          cursor: 'pointer',
-          ...props.style
-        }}
-        onMouseEnter={(e: any) => {
-          e.target.style.backgroundColor = theme.mode === 'dark' ? '#1a365d' : '#e3f2fd';
-          e.target.style.transform = 'translateX(4px)';
-        }}
-        onMouseLeave={(e: any) => {
-          e.target.style.backgroundColor = 'transparent';
-          e.target.style.transform = 'translateX(0px)';
-        }}
-      >
-        <span style={{
-          color: theme.colors.primary,
-          fontWeight: '600',
-          minWidth: '16px',
-          fontSize: '1rem',
-          marginTop: '1px'
-        }}>
-          -
-        </span>
-         <span style={{ 
-           flex: 1,
-           color: theme.mode === 'dark' ? '#ffffff !important' : theme.colors.text + ' !important',
-           fontWeight: theme.mode === 'dark' ? '500' : 'normal',
-           // 추가 스타일로 강제 적용
-           WebkitTextFillColor: theme.mode === 'dark' ? '#ffffff' : theme.colors.text,
-           textShadow: 'none'
-         }}>
-           <div style={{ 
-             color: theme.mode === 'dark' ? '#ffffff !important' : theme.colors.text + ' !important',
-             fontWeight: theme.mode === 'dark' ? '500' : 'normal'
-           }}>
-             {props.children}
-           </div>
-         </span>
-      </li>
-    ),
+    li: (props: any) => {
+      const ListItemComponent = () => {
+        // Info 블록 내부인지 확인 (부모 요소 체크)
+        const isInInfoBlock = props.className?.includes('info') || 
+                             (typeof props.children === 'string' && props.children.includes('info'));
+        
+        // Info 블록 내부에서는 다른 색상 사용
+        const textColor = isInInfoBlock 
+          ? (theme.mode === 'dark' ? '#e5e7eb' : 'rgb(64, 64, 65)')
+          : theme.colors.text;
+          
+        return (
+          <li 
+            {...props} 
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '0.5rem',
+              padding: '0.5rem 0.75rem',
+              fontSize: '1rem',
+              lineHeight: '1.6',
+              color: textColor,
+              borderRadius: '6px',
+              margin: '0.2rem 0',
+              transition: 'all 0.2s ease',
+              cursor: 'pointer',
+              ...props.style
+            }}
+            onMouseEnter={(e: any) => {
+              e.target.style.backgroundColor = theme.mode === 'dark' ? '#1a365d' : '#e3f2fd';
+              e.target.style.transform = 'translateX(4px)';
+            }}
+            onMouseLeave={(e: any) => {
+              e.target.style.backgroundColor = 'transparent';
+              e.target.style.transform = 'translateX(0px)';
+            }}
+          >
+            <span style={{
+              color: isInInfoBlock 
+                ? (theme.mode === 'dark' ? '#22c55e' : 'rgb(28, 157, 133)')
+                : theme.colors.primary,
+              fontWeight: '600',
+              minWidth: '16px',
+              fontSize: '1rem',
+              marginTop: '1px',
+              transition: 'color 0.3s ease'
+            }}>
+              -
+            </span>
+             <span style={{ 
+               flex: 1,
+               color: textColor,
+               fontWeight: theme.mode === 'dark' ? '500' : 'normal',
+               transition: 'color 0.3s ease'
+             }}>
+               {props.children}
+             </span>
+          </li>
+        );
+      };
+      return <ListItemComponent key={theme.mode} />;
+    },
     img: (props: any) => (
       <img 
         {...props} 
@@ -171,7 +182,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
       }
       return <CodeBlock {...props} />;
     }
-  };
+  }), [theme]);
 
   useEffect(() => {
     setContent('');
@@ -201,7 +212,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
       }
     })();
     return () => { cancelled = true; };
-  }, [content]);
+  }, [content, theme]);
 
   if (error) return <Wrapper theme={theme} style={{ color: 'red' }}>{error}</Wrapper>;
   if (!content || !MDXComponent) return <Wrapper theme={theme}>로딩 중...</Wrapper>;

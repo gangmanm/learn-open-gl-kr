@@ -27,6 +27,7 @@ const ListItem = styled.li<{$compact?: boolean; theme: any}>`
   font-size: ${({$compact}) => $compact ? '1rem' : '1.08rem'};
   border-bottom: 1px solid ${props => props.theme.colors.border};
   color: ${props => props.theme.colors.text};
+  transition: color 0.3s ease, border-color 0.3s ease;
 
   &:last-child {
     border-bottom: none;
@@ -61,7 +62,7 @@ function List({
             : ordered
               ? <span style={{color: theme.colors.primary, fontWeight:600, minWidth:24}}>{idx+1}.</span>
               : <FiCheckCircle style={{color: theme.colors.primary, minWidth:24}} />}
-          <span style={{color: theme.colors.text}}>{renderItem ? renderItem(item, idx) : item}</span>
+          <span style={{color: theme.colors.text, transition: 'color 0.3s ease'}}>{renderItem ? renderItem(item, idx) : item}</span>
         </ListItem>
       ))}
     </ListTag>
