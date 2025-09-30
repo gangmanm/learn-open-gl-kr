@@ -228,6 +228,11 @@ const GlobalStyle = createGlobalStyle`
     outline: none !important;
   }
 
+  /* 색상 컴포넌트 식별자 우선 */
+  [data-color-text="true"] {
+    color: inherit;
+  }
+
 `;
 
 export default GlobalStyle;

@@ -28,6 +28,8 @@ const Wrapper = styled.div<{ theme: any }>`
   overflow-x: hidden;
   word-wrap: break-word;
   
+  /* 리스트 내 기본 텍스트 색만 지정하고, 자식 컴포넌트 고유 색은 유지 */
+  
   @media (max-width: 768px) {
     max-width: 100%;
     margin: 1rem 0;
@@ -98,7 +100,6 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
               padding: '0.5rem 0.75rem',
               fontSize: '1rem',
               lineHeight: '1.6',
-              color: textColor,
               borderRadius: '6px',
               margin: '0.2rem 0',
               transition: 'all 0.2s ease',
@@ -126,12 +127,14 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
             }}>
               -
             </span>
-             <span style={{ 
-               flex: 1,
-               color: textColor,
-               fontWeight: theme.mode === 'dark' ? '500' : 'normal',
-               transition: 'color 0.3s ease'
-             }}>
+             <span 
+               style={{ 
+                 flex: 1,
+                 fontWeight: theme.mode === 'dark' ? '500' : 'normal',
+                 transition: 'color 0.3s ease'
+               }}
+               className="list-content"
+             >
                {props.children}
              </span>
           </li>

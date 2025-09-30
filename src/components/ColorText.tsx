@@ -6,9 +6,11 @@ interface ColorTextProps {
   children: React.ReactNode;
 }
 
-const StyledSpan = styled.span<{ $color: string }>`
-  color: ${props => props.$color};
-  font-weight: inherit;
+const StyledSpan = styled.span.attrs({ 'data-color-text': 'true' })<{ $color: string }>`
+  && {
+    color: ${props => props.$color} !important;
+    font-weight: inherit;
+  }
 `;
 
 const ColorText: React.FC<ColorTextProps> = ({ color, children }) => {
