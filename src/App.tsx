@@ -6,6 +6,7 @@ import ThemeToggle from './components/ThemeToggle';
 import Logo from './components/Logo';
 import { FiMenu } from 'react-icons/fi';
 import { useTheme } from './contexts/ThemeContext';
+import { Analytics } from "@vercel/analytics/next"
 
 const Layout = styled.div<{ theme: any }>`
   width: 100vw;
@@ -132,6 +133,7 @@ function App() {
       <Main theme={theme}>
         <Readme doc={DOC_MAP[selected] || 'introduction'} />
       </Main>
+      <Analytics />
     </Layout>
   );
 }
