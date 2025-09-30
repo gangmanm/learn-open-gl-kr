@@ -6,7 +6,7 @@ import ThemeToggle from './components/ThemeToggle';
 import Logo from './components/Logo';
 import { FiMenu } from 'react-icons/fi';
 import { useTheme } from './contexts/ThemeContext';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 
 const Layout = styled.div<{ theme: any }>`
   width: 100vw;
