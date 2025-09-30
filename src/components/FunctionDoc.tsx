@@ -99,7 +99,7 @@ const FunctionName = styled.h3<{ theme: any }>`
 `;
 
 const CloseButton = styled.button<{ theme: any }>`
-  display: none;
+  display: flex;
   background: none;
   border: none;
   color: ${props => props.theme.colors.textSecondary};
@@ -112,12 +112,8 @@ const CloseButton = styled.button<{ theme: any }>`
     background: ${props => props.theme.mode === 'dark' ? 'rgba(255, 107, 107, 0.1)' : 'rgba(145, 202, 255, 0.2)'};
     color: ${props => props.theme.colors.text};
   }
-  
-  @media (max-width: 768px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  align-items: center;
+  justify-content: center;
 `;
 
 const BoxContent = styled.div`
@@ -220,47 +216,31 @@ const FunctionDoc: React.FC<FunctionDocProps> = ({ name, params, description, ex
   
   useEffect(() => {
     const container = containerRef.current;
-    const box = boxRef.current;
-    
+
     if (container) {
-      const handleMouseEnter = () => setIsVisible(true);
-      const handleMouseLeave = (e: MouseEvent) => {
-        // 마우스가 팝업으로 이동하는 경우 숨기지 않음
-        if (box && box.contains(e.relatedTarget as Node)) {
-          return;
-        }
-        setIsVisible(false);
-      };
-      
-      container.addEventListener('mouseenter', handleMouseEnter);
-      container.addEventListener('mouseleave', handleMouseLeave);
+      const handleClick = () => setIsVisible(true);
+      // 데스크탑에서도 자동 닫힘 방지: mouseleave/blur로 닫지 않음
+      container.addEventListener('click', handleClick);
       container.addEventListener('focus', showTooltip);
-      container.addEventListener('blur', hideTooltip);
-      
+
       return () => {
-        container.removeEventListener('mouseenter', handleMouseEnter);
-        container.removeEventListener('mouseleave', handleMouseLeave);
+        container.removeEventListener('click', handleClick);
         container.removeEventListener('focus', showTooltip);
-        container.removeEventListener('blur', hideTooltip);
       };
     }
   }, []);
 
+  // 팝업 밖 클릭 시 닫기 (명시적으로 X를 누르기 전까지 유지하되, 바깥 클릭은 닫기)
   useEffect(() => {
-    const box = boxRef.current;
-    
-    if (box) {
-      const handleMouseEnter = () => setIsVisible(true);
-      const handleMouseLeave = () => setIsVisible(false);
-      
-      box.addEventListener('mouseenter', handleMouseEnter);
-      box.addEventListener('mouseleave', handleMouseLeave);
-      
-      return () => {
-        box.removeEventListener('mouseenter', handleMouseEnter);
-        box.removeEventListener('mouseleave', handleMouseLeave);
-      };
-    }
+    if (!isVisible) return;
+    const handleDocClick = (e: MouseEvent) => {
+      const box = boxRef.current;
+      if (box && !box.contains(e.target as Node)) {
+        setIsVisible(false);
+      }
+    };
+    document.addEventListener('mousedown', handleDocClick);
+    return () => document.removeEventListener('mousedown', handleDocClick);
   }, [isVisible]);
 
   // ESC 키로 팝업 닫기
