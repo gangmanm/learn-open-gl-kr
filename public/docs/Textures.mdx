@@ -396,3 +396,31 @@ stbi_image_free(data);
 
 ## Applying textures 텍스처 적용하기 
 
+다음 섹션들에서는 <LinkBlock url="https://learnopenglkr.com/#hellotriangle" text="Hello Triangle"/> 챕터 마지막 부분에서 <Func 
+  name="glDrawElements"
+  params='[{"name":"mode","type":"GLenum","description":"그릴 프리미티브의 종류를 지정합니다. GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES 등이 가능합니다."},{"name":"count","type":"GLsizei","description":"그릴 정점/요소의 개수를 지정합니다 (인덱스 사용)."},{"name":"type","type":"GLenum","description":"인덱스 값들의 타입을 지정합니다. GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT 중 하나입니다."},{"name":"indices","type":"const GLvoid*","description":"인덱스가 저장된 버퍼의 오프셋을 지정하거나 인덱스 배열에 대한 포인터입니다 (EBO가 바인딩되지 않은 경우)."}]'
+  description="현재 바인딩된 VBO와 EBO를 사용하여 인덱스 기반 렌더링을 수행합니다. 이 함수는 indexed drawing을 가능하게 하여 중복된 정점을 제거하고 glDrawArrays보다 효율적인 렌더링을 제공합니다. EBO에 저장된 인덱스 순서에 따라 VBO의 정점들을 그립니다."
+  example="glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);"
+  tags='["Drawing", "Rendering", "Indexed Drawing"]'
+/>로 그린 사각형 도형을 사용할 것입니다. 이제 OpenGL에 택스처를 어떻게 셈플링 해야하는지 알려주어야 하므로, 정점 데이터(vertex data) 에 
+텍스처 좌표(texture coordinates)를 추가해야 합니다.
+
+
+```cpp 
+float vertices[] = {
+    // positions          // colors           // texture coords
+     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+};
+```
+
+정점 속성(vertex attribte)를 추가했으니 다시 OpenGL에게 새로운 정점 형식을 알려주어야 합니다. 
+![vertex_attribute_pointer_interleaved_textures](./images/getting-started/vertex_attribute_pointer_interleaved_textures.png)
+
+```cpp 
+glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+glEnableVertexAttribArray(2);  
+```
+
