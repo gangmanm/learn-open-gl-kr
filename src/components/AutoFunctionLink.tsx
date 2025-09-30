@@ -15,8 +15,8 @@ const AutoFunctionLink: React.FC<AutoFunctionLinkProps> = ({ children, className
     return <span className={className}>{children}</span>;
   }
 
-  // OpenGL 함수명 패턴 매칭 (gl로 시작하는 함수들 + glfwGetTime)
-  const functionPattern = /\b(gl[A-Z][a-zA-Z0-9]*|glfwGetTime)\b/g;
+  // OpenGL 함수명 패턴 매칭 (gl로 시작하는 함수들 + glfw 함수들)
+  const functionPattern = /\b(gl[A-Z][a-zA-Z0-9]*|glfw[A-Z][a-zA-Z0-9]*)\b/g;
   const parts: (string | JSX.Element)[] = [];
   let lastIndex = 0;
   let match;

@@ -26,7 +26,7 @@ int main()
 }
 ```
 메인 함수에서 처음으로 GLFW를 `glfwInit`으로 초기화가 완료되면,
-`glfwWindowHint` 함수를 사용하여 GLFW 설정을 구성할 수 있습니다. `glfwWindowHint`의 첫 번째 인자는 설정하려는 옵션을 지정합니다.
+`glfwWindowHint` 함수를 사용하여 GLFW 설정을 구성할 수 있습니다. `glfwWindowHint` 의 첫 번째 인자는 설정하려는 옵션을 지정합니다.
 `GLFW_` 로 시작하는 다양한 열거형(enum) 값들 중에서 선택할 수 있습니다. 두 번째 인자는 해당 옵션에 설정할 정수값 입니다.
 사용 가능한 모든 옵션과 그에 해당하는 값들은 [GLFW의 윈도우 처리 문서에서](https://www.glfw.org/docs/latest/window.html#window_hints) 확인할 수 있습니다.
 만약 지금 애플리케이션을 실행했을 때 undefined reference(정의되지 않은 참조) 오류가 많이 발생한다면, 이는 GLFW 라이브러리를 제대로 링크하지 않았다는 뜻입니다
@@ -64,7 +64,7 @@ glfwMakeContextCurrent(window);
 세 번째 인자는 윈도우의 이름(제목)을 설정하는 데 사용되며, 여기서는 "LearnOpenGL"로 설정했지만 원하는 이름으로 지정할 수 있습니다. 마지막 두 개의 인자는 지금은 무시해도 괜찮습니다. 이 함수는 나중에 다른 GLFW 작업에 필요하게 될 <Red>GLFWwindow</Red> 객체를 반환합니다. 그 다음에는, 우리가 생성한 윈도우의 OpenGL 컨텍스트를 현재 스레드의 주 컨텍스트로 설정하기 위해 GLFW에 알려야 합니다. 그 다음에는, GLFW에 현재 스레드에서 사용할 주요 컨텍스트(main context)로 우리가 생성한 윈도우의 컨텍스트를 설정하라고 지정합니다. `glfwMakeContextCurrent`
 
 <Info>
-OpenGL은 어떤 창에 그릴지를 몰라서 glfwMakeContextCurrent()를 통해 명시해줘야 합니다. 그때그때 그릴 창(window)을 활성화해줘야만 OpenGL 명령이 해당 창에 제대로 적용됩니다.
+OpenGL은 어떤 창에 그릴지를 몰라서 `glfwMakeContextCurrent`를 통해 명시해줘야 합니다. 그때그때 그릴 창(window)을 활성화해줘야만 OpenGL 명령이 해당 창에 제대로 적용됩니다.
 </Info>
 
 ```cpp

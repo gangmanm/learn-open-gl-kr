@@ -11,6 +11,7 @@ export default defineConfig({
     mdx({
       remarkPlugins: [remarkMath],
       rehypePlugins: [rehypeKatex],
+      providerImportSource: '@mdx-js/react',
     }),
   ],
 }) 
