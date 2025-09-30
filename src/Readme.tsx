@@ -18,6 +18,7 @@ import { Red, Green, Blue } from './components/ColorText';
 import GiscusComments from './components/GiscusComments';
 import VideoPlayer from './components/VideoPlayer';
 import YouTubeEmbed from './components/YouTubeEmbed';
+import PrevNextNav from './components/PrevNextNav';
 const Wrapper = styled.div<{ theme: any }>`
   max-width: 700px;
   margin: 2rem auto;
@@ -47,6 +48,49 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
   const [content, setContent] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [MDXComponent, setMDXComponent] = useState<React.ComponentType | null>(null);
+
+  // 문서 순서/라벨 정의 (사이드바 순서와 동일)
+  const ORDERED_SLUGS: string[] = [
+    'introduction',
+    'opengl',
+    'creatingawindow',
+    'hellowindow',
+    'hellotriangle',
+    'shaders',
+    'textures',
+  ];
+
+  const SLUG_TO_LABEL: Record<string, string> = {
+    introduction: '소개',
+    opengl: 'OpenGL이란',
+    creatingawindow: '윈도우 창 만들기',
+    hellowindow: 'Hello Window',
+    hellotriangle: 'Hello Triangle',
+    shaders: 'Shaders',
+    textures: 'Textures',
+  };
+
+  // 파일명 <-> 해시 슬러그 매핑 (App의 DOC_MAP과 역매핑)
+  const FILE_TO_SLUG: Record<string, string> = {
+    introduction: 'introduction',
+    opengl: 'opengl',
+    creatingawindow: 'creatingawindow',
+    HelloWindow: 'hellowindow',
+    HelloTriangle: 'hellotriangle',
+    Shaders: 'shaders',
+    Textures: 'textures',
+  };
+
+  const currentSlug = FILE_TO_SLUG[doc] || null;
+  const currentIndex = currentSlug ? ORDERED_SLUGS.indexOf(currentSlug) : -1;
+  const prevSlug = currentIndex > 0 ? ORDERED_SLUGS[currentIndex - 1] : null;
+  const nextSlug = currentIndex >= 0 && currentIndex < ORDERED_SLUGS.length - 1 ? ORDERED_SLUGS[currentIndex + 1] : null;
+
+  const handleNavigate = (slug: string | null) => {
+    if (!slug) return;
+    window.location.hash = slug;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const components = useMemo(() => ({ 
     Func: FunctionDoc,
@@ -127,9 +171,10 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
             }}>
               -
             </span>
-             <span 
+            <span 
                style={{ 
                  flex: 1,
+                 color: textColor,
                  fontWeight: theme.mode === 'dark' ? '500' : 'normal',
                  transition: 'color 0.3s ease'
                }}
@@ -223,9 +268,16 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
 
   return (
     <Wrapper theme={theme}>
+      
       <MDXProvider components={components}>
         <MDXComponent />
       </MDXProvider>
+      <PrevNextNav
+        prevSlug={prevSlug}
+        nextSlug={nextSlug}
+        slugToLabel={SLUG_TO_LABEL}
+        onNavigate={(s) => handleNavigate(s)}
+      />
       <div style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: `1px solid ${theme.colors.border}` }}>
         <GiscusComments
           repo="gangmanm/learn-open-gl-kr"
