@@ -5,7 +5,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import Logo from './Logo';
 
-const Sidebar = styled.nav<{ isOpen?: boolean; theme: any }>`
+const Sidebar = styled.nav<{ $isOpen?: boolean; theme: any }>`
   width: 300px;
   padding: 2.7rem 1.4rem 2rem 1.4rem;
   box-sizing: border-box;
@@ -23,7 +23,7 @@ const Sidebar = styled.nav<{ isOpen?: boolean; theme: any }>`
     left: 0;
     top: 0;
     height: 100vh;
-    transform: translateX(${props => props.isOpen ? '0' : '-100%'});
+    transform: translateX(${props => props.$isOpen ? '0' : '-100%'});
     transition: transform 0.2s ease-out, box-shadow 0.2s ease, background 0.2s ease;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 2px 0 16px 0 rgba(80, 120, 200, 0.13);
     width: 80vw;
@@ -260,6 +260,7 @@ const DOCS: NavItemType[] = [
       { label: 'Hello Triangle', value: 'hellotriangle' },
       { label: 'Shaders', value: 'shaders' },
       { label: 'Textures', value: 'textures' },
+      { label: 'Transformations', value: 'transformations' }
     ],
   },
 ];
@@ -315,7 +316,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ selected, onSelect, isOpen, onC
 
   return (
     <>
-      <Sidebar isOpen={isOpen} theme={theme}>
+      <Sidebar $isOpen={isOpen} theme={theme}>
         <MobileSidebarHeader>
           <CloseButton onClick={onClose} aria-label="메뉴 닫기">
             <FiXCircle style={{color: theme.colors.primary, marginTop: '1rem'}}/>

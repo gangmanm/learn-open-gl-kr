@@ -87,8 +87,8 @@ const DOC_MAP: Record<string, string> = {
   hellotriangle: 'HelloTriangle',
   shaders: 'Shaders',
   textures: 'Textures',
-  opengl_tutorial_6: 'opengl_tutorial_6',
-  opengl_tutorial_7: 'opengl_tutorial_7',
+  transformations: 'Transformations',
+  opengl_tutorial_7: 'Camera',
 };
 
 function App() {

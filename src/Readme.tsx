@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { MDXProvider } from '@mdx-js/react';
 import * as runtime from 'react/jsx-runtime';
 import { evaluate } from '@mdx-js/mdx';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import FunctionDoc from './components/FunctionDoc';
 import CodeBlock from './components/CodeBlock';
 import WarningBlock from './components/WarningBlock';
@@ -254,7 +256,9 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
       try {
         const { default: Comp } = await evaluate(content, {
           ...runtime,
-          useMDXComponents: () => components
+          useMDXComponents: () => components,
+          remarkPlugins: [remarkMath],
+          rehypePlugins: [rehypeKatex]
         });
         if (!cancelled) setMDXComponent(() => Comp);
       } catch (e) {
