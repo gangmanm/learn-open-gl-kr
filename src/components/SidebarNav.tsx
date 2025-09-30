@@ -102,23 +102,30 @@ const NavItem = styled.li<{
   margin-bottom: 0.6rem;
   border: 1px solid ${props => props.theme.colors.border};
   padding: 0.5rem 1rem;
-  color: ${({ $selected, theme }) => ($selected ? theme.colors.primary : theme.colors.sidebar.text)};
+  color: ${({ $selected, theme }) => (
+    $selected ? (theme.mode === 'dark' ? '#ffffff' : theme.colors.primary) : theme.colors.sidebar.text
+  )};
   font-weight: ${({ $selected, $isParent }) => ($selected || $isParent ? 600 : 400)};
   cursor: ${({ $isParent }) => ($isParent ? 'pointer' : 'pointer')};
   margin-left: ${({ $depth }) => ($depth === 1 ? '2.1em' : 0)};
   display: flex;
-  background: ${({ $selected, theme }) => ($selected ? `linear-gradient(90deg,${theme.colors.primary}15 0%,${theme.colors.primary}08 100%)` : 'transparent')};
+  background: ${({ $selected, theme }) => (
+    $selected ? `linear-gradient(90deg,${theme.colors.primary}28 0%,${theme.colors.primary}18 100%)` : 'transparent'
+  )};
   border-radius: 9px;
   transition: background 0.22s, color 0.18s, box-shadow 0.18s, border-color 0.3s ease;
   position: relative;
-  box-shadow: ${({ $selected, theme }) => ($selected ? `0 2px 12px 0 ${theme.colors.primary}15` : 'none')};
+  box-shadow: ${({ $selected, theme }) => ($selected ? `0 2px 12px 0 ${theme.colors.primary}25` : 'none')};
   z-index: 1;
   letter-spacing: -0.01em;
+  border-color: ${({ $selected, theme }) => ($selected ? theme.colors.primary : theme.colors.border)};
 
   &:hover {
-    color: ${props => props.theme.colors.primary};
-    background: ${({ $selected, theme }) => ($selected ? `linear-gradient(90deg,${theme.colors.primary}20 0%,${theme.colors.primary}12 100%)` : `${theme.colors.primary}10`)};
-    box-shadow: 0 2px 16px 0 ${props => props.theme.colors.primary}15;
+    color: ${props => (props.theme.mode === 'dark' ? '#ffffff' : props.theme.colors.primary)};
+    background: ${({ $selected, theme }) => (
+      $selected ? `linear-gradient(90deg,${theme.colors.primary}32 0%,${theme.colors.primary}20 100%)` : `${theme.colors.primary}10`
+    )};
+    box-shadow: 0 2px 16px 0 ${props => props.theme.colors.primary}25;
   }
 `;
 
