@@ -58,6 +58,7 @@ const CopyButton = styled.button<{ theme: any }>`
 interface CodeBlockProps {
   children: string;
   className?: string;
+  autoLink?: boolean;
 }
 
 const CodeBlock: React.FC<CodeBlockProps> = ({ children, className }) => {

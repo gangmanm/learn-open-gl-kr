@@ -19,6 +19,7 @@ import GiscusComments from './components/GiscusComments';
 import VideoPlayer from './components/VideoPlayer';
 import YouTubeEmbed from './components/YouTubeEmbed';
 import PrevNextNav from './components/PrevNextNav';
+import AutoFunctionLink from './components/AutoFunctionLink';
 const Wrapper = styled.div<{ theme: any }>`
   max-width: 700px;
   margin: 2rem auto;
@@ -207,9 +208,8 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
       const isInline = !props.className;
       if (isInline) {
         return (
-          <code 
-            {...props} 
-            style={{
+          <AutoFunctionLink 
+            fallbackStyle={{
               background: theme.mode === 'dark' ? '#1f2937' : '#f3f4f6',
               padding: '2px 6px',
               borderRadius: '4px',
@@ -223,10 +223,11 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
               display: 'inline-block',
               lineHeight: '1.3',
               boxShadow: 'none',
-              textShadow: 'none',
-              ...props.style
+              textShadow: 'none'
             }}
-          />
+          >
+            {props.children}
+          </AutoFunctionLink>
         );
       }
       return <CodeBlock {...props} />;
