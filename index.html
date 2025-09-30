@@ -49,44 +49,152 @@
     
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": ["WebSite", "EducationalOrganization"],
-      "name": "OpenGL 한국어 튜토리얼",
-      "alternateName": "LearnOpenGL 한국어 번역",
-      "description": "OpenGL을 한국어로 배우세요! LearnOpenGL.com 한국어 번역",
-      "url": "https://learnopenglkr.com",
-      "inLanguage": "ko-KR",
-      "author": {
-        "@type": "Organization",
-        "name": "Learn OpenGL 한국어 번역팀"
-      },
-      "educationalUse": ["tutorial", "course", "reference"],
-      "educationalLevel": "beginner to intermediate",
-      "teaches": ["OpenGL", "3D Graphics", "Computer Graphics", "Shaders", "GLSL"],
-      "audience": {
-        "@type": "Audience",
-        "audienceType": "개발자, 프로그래머, 학생, 게임 개발자"
-      },
-      "about": [
-        {
-          "@type": "Thing",
-          "name": "OpenGL",
-          "description": "3D 그래픽스 프로그래밍 API"
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "OpenGL 한국어 튜토리얼",
+        "alternateName": ["LearnOpenGL 한국어 번역", "OpenGL 한국어로 배우기"],
+        "description": "OpenGL을 한국어로 배우세요! LearnOpenGL.com 한국어 번역",
+        "url": "https://learnopenglkr.com",
+        "inLanguage": "ko-KR",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Learn OpenGL 한국어 번역팀",
+          "url": "https://learnopenglkr.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://learnopenglkr.com/Logo.png",
+            "width": 512,
+            "height": 512
+          }
         },
-        {
-          "@type": "Thing", 
-          "name": "3D Graphics Programming",
-          "description": "3차원 그래픽스 프로그래밍"
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://learnopenglkr.com/Logo.png",
+          "width": 512,
+          "height": 512
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://learnopenglkr.com/?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        },
+        "sameAs": [
+          "https://github.com/gangmanm/learn-open-gl-kr"
+        ]
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "LearnOpenGL 한국어 번역",
+        "description": "LearnOpenGL.com 내용을 한국어로 번역한 사이트입니다. 쉐이더, 텍스처, 렌더링 파이프라인 등을 단계별로 학습할 수 있습니다.",
+        "provider": {
+          "@type": "Organization",
+          "name": "Learn OpenGL 한국어 번역팀",
+          "url": "https://learnopenglkr.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://learnopenglkr.com/Logo.png",
+            "width": 512,
+            "height": 512
+          }
+        },
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://learnopenglkr.com/Logo.png",
+          "width": 512,
+          "height": 512
+        },
+        "url": "https://learnopenglkr.com",
+        "inLanguage": "ko-KR",
+        "educationalLevel": "Beginner to Intermediate",
+        "teaches": [
+          "OpenGL API 사용법",
+          "3D 그래픽스 프로그래밍",
+          "쉐이더 프로그래밍",
+          "텍스처 매핑",
+          "렌더링 파이프라인",
+          "GLSL 쉐이더 언어"
+        ],
+        "audience": {
+          "@type": "Audience",
+          "audienceType": "개발자, 프로그래머, 학생, 게임 개발자"
+        },
+        "courseMode": "online",
+        "isAccessibleForFree": true,
+        "hasCourseInstance": {
+          "@type": "CourseInstance",
+          "courseMode": "online",
+          "instructor": {
+            "@type": "Organization",
+            "name": "Learn OpenGL 한국어 번역팀"
+          }
         }
-      ],
-      "keywords": "OpenGL 한국어, LearnOpenGL 번역, 3D 그래픽스, 쉐이더, GLSL, 컴퓨터 그래픽스",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://learnopenglkr.com/?search={search_term_string}",
-        "query-input": "required name=search_term_string"
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "OpenGL 한국어 튜토리얼 - 3D 그래픽스 프로그래밍 배우기",
+        "description": "OpenGL을 한국어로 배우세요! 3D 그래픽스, 쉐이더, 텍스처, 렌더링을 단계별로 학습하는 완전한 가이드입니다.",
+        "author": {
+          "@type": "Organization",
+          "name": "Learn OpenGL 한국어 번역팀",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://learnopenglkr.com/Logo.png",
+            "width": 512,
+            "height": 512
+          }
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Learn OpenGL 한국어 번역팀",
+          "url": "https://learnopenglkr.com",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://learnopenglkr.com/Logo.png",
+            "width": 512,
+            "height": 512
+          }
+        },
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://learnopenglkr.com/Logo.png",
+          "width": 512,
+          "height": 512
+        },
+        "url": "https://learnopenglkr.com",
+        "inLanguage": "ko-KR",
+        "datePublished": "2025-09-30",
+        "dateModified": "2025-09-30",
+        "keywords": [
+          "OpenGL",
+          "3D 그래픽스",
+          "쉐이더",
+          "GLSL",
+          "텍스처",
+          "렌더링",
+          "게임 개발",
+          "컴퓨터 그래픽스",
+          "프로그래밍 튜토리얼"
+        ],
+        "about": [
+          {
+            "@type": "Thing",
+            "name": "OpenGL",
+            "description": "크로스 플랫폼 3D 그래픽스 API"
+          },
+          {
+            "@type": "Thing",
+            "name": "3D Graphics Programming",
+            "description": "3차원 컴퓨터 그래픽스 프로그래밍"
+          }
+        ],
+        "educationalUse": ["tutorial", "reference", "learning"],
+        "isAccessibleForFree": true
       }
-    }
+    ]
     </script>
   </head>
   <body>

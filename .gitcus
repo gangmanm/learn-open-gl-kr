@@ -25,7 +25,7 @@ anonymous: 0
 
 # Additional settings for Korean documentation site
 # - Uses pathname mapping for per-page comments
-# - Korean language support
+# -  language support
 # - Top input position for better UX
 # - Reactions enabled for user engagement
 # - Lazy loading for performance

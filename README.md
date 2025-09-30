@@ -1,4 +1,4 @@
-# Learn OpenGL KR (React + Vite)
+#  KR (React + Vite)
 
 이 프로젝트는 [LearnOpenGL](https://learnopengl.com) 내용을 바탕으로 한 [learnOpenGL 한국어 번역](https://learnopenglkr.com/) 사이트 입니다. 원문 흐름을 해치지 않으면서 한국어 독자에게 친숙한 예시, 주석, 보충 설명을 추가했습니다. React + Vite 기반으로 문서를 MDX로 렌더링하며, 실습 코드/이미지/동영상을 포함해 단계적으로 학습할 수 있도록 구성되어 있습니다.
 
