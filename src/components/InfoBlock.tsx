@@ -18,25 +18,13 @@ const Info = styled.div<{ theme: any }>`
     : 'rgb(64, 64, 65)'};
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
   
-  /* Info 블록 내부의 리스트 아이템 색상 강제 설정 */
-  li {
-    color: ${props => props.theme.mode === 'dark' 
-      ? '#e5e7eb !important' 
-      : 'rgb(64, 64, 65) !important'};
+  /* 자식은 기본적으로 상위 색을 상속하되, 특정 색상 컴포넌트는 유지 */
+  & * {
+    color: inherit;
   }
   
-  /* Info 블록 내부의 모든 텍스트 요소 색상 설정 */
-  * {
-    color: ${props => props.theme.mode === 'dark' 
-      ? '#e5e7eb' 
-      : 'rgb(64, 64, 65)'};
-  }
-  
-  /* 리스트 아이템의 자식 요소들도 색상 적용 */
-  li span {
-    color: ${props => props.theme.mode === 'dark' 
-      ? '#e5e7eb !important' 
-      : 'rgb(64, 64, 65) !important'};
+  &[data-info] [data-color-text="true"] {
+    color: inherit;
   }
 `;
 
@@ -46,7 +34,7 @@ interface InfoBlockProps {
 
 const InfoBlock: React.FC<InfoBlockProps> = ({ children }) => {
   const { theme } = useTheme();
-  return <Info theme={theme}>{children}</Info>;
+  return <Info theme={theme} data-info>{children}</Info>;
 };
 
 export default InfoBlock; 
