@@ -51,24 +51,40 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "OpenGL 한국어로 배우기",
-      "description": "OpenGL을 한국어로 배워보세요. 3D 그래픽스 프로그래밍, 쉐이더, 렌더링 파이프라인을 쉽게 이해할 수 있는 한국어 튜토리얼입니다.",
+      "@type": ["WebSite", "EducationalOrganization"],
+      "name": "OpenGL 한국어 튜토리얼",
+      "alternateName": "LearnOpenGL 한국어 번역",
+      "description": "OpenGL을 한국어로 배우세요! LearnOpenGL.com 한국어 번역",
       "url": "https://learnopenglkr.com",
       "inLanguage": "ko-KR",
       "author": {
         "@type": "Organization",
         "name": "Learn OpenGL 한국어 번역팀"
       },
-      "educationalUse": "tutorial",
+      "educationalUse": ["tutorial", "course", "reference"],
+      "educationalLevel": "beginner to intermediate",
+      "teaches": ["OpenGL", "3D Graphics", "Computer Graphics", "Shaders", "GLSL"],
       "audience": {
         "@type": "Audience",
-        "audienceType": "개발자, 프로그래머, 학생"
+        "audienceType": "개발자, 프로그래머, 학생, 게임 개발자"
       },
-      "about": {
-        "@type": "Thing",
-        "name": "OpenGL",
-        "description": "3D 그래픽스 프로그래밍 API"
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "OpenGL",
+          "description": "3D 그래픽스 프로그래밍 API"
+        },
+        {
+          "@type": "Thing", 
+          "name": "3D Graphics Programming",
+          "description": "3차원 그래픽스 프로그래밍"
+        }
+      ],
+      "keywords": "OpenGL 한국어, LearnOpenGL 번역, 3D 그래픽스, 쉐이더, GLSL, 컴퓨터 그래픽스",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://learnopenglkr.com/?search={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
     }
     </script>
