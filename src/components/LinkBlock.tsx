@@ -10,25 +10,28 @@ interface LinkBlockProps {
 
 const Card = styled.span<{ theme: any }>`
     display: inline-block;
-    background: ${props => props.theme.mode === 'dark' ? '#1a365d' : '#f7f7fa'};
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    padding: 0.18em 0.7em;
-    text-align: center;
+    background: ${props => props.theme.mode === 'dark' ? 'rgba(64, 150, 255, 0.1)' : 'rgba(22, 119, 255, 0.05)'};
+    border-radius: 4px;
+    padding: 0.25em 0.6em;
     text-decoration: none;
-    border: 1px solid ${props => props.theme.mode === 'dark' ? '#4096ff' : '#e0e0e0'};
-    color: ${props => props.theme.mode === 'dark' ? '#4096ff' : '#1677ff'};
-    font-size: 0.98em;
+    border: 1px solid ${props => props.theme.mode === 'dark' ? 'rgba(64, 150, 255, 0.3)' : 'rgba(22, 119, 255, 0.2)'};
+    color: ${props => props.theme.mode === 'dark' ? '#60a5fa' : '#1677ff'};
+    font-size: 0.9em;
     font-weight: 500;
     cursor: pointer;
-    transition: transform 0.13s, box-shadow 0.13s, background 0.13s, color 0.13s;
-    margin: 0 0.15em;
+    transition: all 0.2s ease;
+    margin: 0 0.2em;
     vertical-align: middle;
+    
     &:hover {
-        transform: translateY(-2px) scale(1.04);
-        box-shadow: 0 4px 16px ${props => props.theme.mode === 'dark' ? 'rgba(64,150,255,0.13)' : 'rgba(22,119,255,0.13)'};
-        background: ${props => props.theme.mode === 'dark' ? '#2d5a87' : '#e6f0ff'};
-        color: ${props => props.theme.mode === 'dark' ? '#60a5fa' : '#0d47a1'};
+        background: ${props => props.theme.mode === 'dark' ? 'rgba(64, 150, 255, 0.2)' : 'rgba(22, 119, 255, 0.1)'};
+        border-color: ${props => props.theme.mode === 'dark' ? 'rgba(64, 150, 255, 0.5)' : 'rgba(22, 119, 255, 0.4)'};
+        color: ${props => props.theme.mode === 'dark' ? '#93c5fd' : '#0d47a1'};
+    }
+    
+    &:focus {
+        outline: 2px solid ${props => props.theme.mode === 'dark' ? '#60a5fa' : '#1677ff'};
+        outline-offset: 2px;
     }
 `;
 
@@ -41,7 +44,7 @@ export const LinkBlock = ({ url, text }: LinkBlockProps) => {
     };
     return (
         <Card onClick={handleClick} tabIndex={0} role="link" aria-label={text} theme={theme}>
-            <FaLink style={{ marginRight: '0.5em', marginTop: '0.2em' }} />
+            <FaLink style={{ marginRight: '0.4em', fontSize: '0.85em' }} />
             {text}
         </Card>
     )

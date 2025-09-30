@@ -14,6 +14,9 @@ const Sidebar = styled.nav<{ isOpen?: boolean; theme: any }>`
   position: relative;
   z-index: 300;
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 
   @media (max-width: 768px) {
     position: fixed;
@@ -86,6 +89,7 @@ const NavList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  flex-grow: 1;
 `;
 
 const NavItem = styled.li<{
@@ -170,6 +174,58 @@ const CloseButton = styled.button`
   line-height: 1;
   display: flex;
   align-items: center;
+`;
+
+const TranslatorInfo = styled.div<{ theme: any }>`
+  margin-top: auto;
+  padding-top: 2rem;
+  border-top: 1px solid ${props => props.theme.colors.border};
+  transition: border-color 0.3s ease;
+`;
+
+const TranslatorTitle = styled.h3<{ theme: any }>`
+  font-size: 0.9rem;
+  color: ${props => props.theme.colors.sidebar.text};
+  margin: 0 0 0.8rem 0;
+  font-weight: 600;
+  transition: color 0.3s ease;
+`;
+
+const TranslatorItem = styled.div<{ theme: any }>`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+  color: ${props => props.theme.colors.textSecondary};
+  transition: color 0.3s ease;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const TranslatorLink = styled.a<{ theme: any }>`
+  color: ${props => props.theme.colors.primary};
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: ${props => props.theme.colors.primary};
+    text-decoration: underline;
+  }
+`;
+
+const TranslatorBadge = styled.span<{ theme: any }>`
+  background: ${props => props.theme.mode === 'dark' ? 'rgba(64, 150, 255, 0.1)' : 'rgba(22, 119, 255, 0.05)'};
+  color: ${props => props.theme.colors.primary};
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid ${props => props.theme.mode === 'dark' ? 'rgba(64, 150, 255, 0.3)' : 'rgba(22, 119, 255, 0.2)'};
+  transition: all 0.3s ease;
 `;
 
 interface NavItemType {
@@ -269,6 +325,42 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ selected, onSelect, isOpen, onC
         <MobileTitle theme={theme}>OpenGL 배우기</MobileTitle>
         
         <NavList>{renderNav(DOCS, selected, onSelect)}</NavList>
+        
+        <TranslatorInfo theme={theme}>
+          <TranslatorTitle theme={theme}>번역자 정보</TranslatorTitle>
+          <TranslatorItem theme={theme}>
+            <span>주 번역자:</span>
+            <TranslatorLink 
+              href="https://github.com/gangmanm" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              theme={theme}
+            >
+              gangmanm
+            </TranslatorLink>
+            <TranslatorBadge theme={theme}>이도경</TranslatorBadge>
+          </TranslatorItem>
+          <TranslatorItem theme={theme}>
+            <span>이메일:</span>
+            <TranslatorLink 
+              href="mailto:dklee7280@gmail.com" 
+              theme={theme}
+            >
+              dklee7280@gmail.com
+            </TranslatorLink>
+          </TranslatorItem>
+          <TranslatorItem theme={theme}>
+            <span>원본:</span>
+            <TranslatorLink 
+              href="https://learnopengl.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              theme={theme}
+            >
+              LearnOpenGL.com
+            </TranslatorLink>
+          </TranslatorItem>
+        </TranslatorInfo>
       </Sidebar>
       {isOpen && <Overlay onClick={handleOverlayClick} />}
     </>
