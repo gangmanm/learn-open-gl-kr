@@ -313,8 +313,8 @@ export const openglFunctions: Record<string, OpenGLFunction> = {
     tags: ["Shaders", "Uniforms"]
   },
 
-  glUniform4f: {
-    name: "glUniform4f",
+  glUniform: {
+    name: "glUniform",
     params: [
       {
         name: "location",
@@ -322,28 +322,13 @@ export const openglFunctions: Record<string, OpenGLFunction> = {
         description: "수정할 uniform 변수의 위치"
       },
       {
-        name: "v0",
-        type: "GLfloat",
-        description: "첫 번째 구성 요소의 값"
-      },
-      {
-        name: "v1",
-        type: "GLfloat",
-        description: "두 번째 구성 요소의 값"
-      },
-      {
-        name: "v2",
-        type: "GLfloat",
-        description: "세 번째 구성 요소의 값"
-      },
-      {
-        name: "v3",
-        type: "GLfloat",
-        description: "네 번째 구성 요소의 값"
+        name: "value",
+        type: "다양한 타입",
+        description: "uniform 변수에 설정할 값 (1~4개의 float, int 또는 벡터/행렬)"
       }
     ],
-    description: "현재 활성화된 쉐이더 프로그램의 vec4 uniform 변수에 4개의 float 값을 설정합니다.",
-    example: "glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);",
+    description: "현재 활성화된 쉐이더 프로그램의 uniform 변수에 값을 설정합니다. glUniform1f, glUniform2f, glUniform3f, glUniform4f, glUniform1i, glUniform2i, glUniform3i, glUniform4i 등 다양한 변형이 있으며, 각각 다른 타입과 개수의 값을 설정할 수 있습니다.",
+    example: "// float 값 설정\nglUniform1f(location, 1.0f);\nglUniform4f(location, 1.0f, 0.5f, 0.2f, 1.0f);\n\n// int 값 설정\nglUniform1i(location, 1);\n\n// 벡터 설정\nfloat values[] = {1.0f, 0.5f, 0.2f};\nglUniform3fv(location, 1, values);",
     tags: ["Shaders", "Uniforms"]
   },
 
@@ -858,5 +843,19 @@ export const openglFunctions: Record<string, OpenGLFunction> = {
     description: "OpenGL이 프리미티브를 그리는 방식인 폴리곤 래스터화 모드를 설정합니다. 개발자는 원한다면 프리미티브를 선이나 점으로 그리도록 선택할 수 있습니다. 이후의 모든 그리기 호출은 설정된 래스터화 모드를 사용합니다.",
     example: "glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // 와이어프레임 모드\nglPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // 기본 모드",
     tags: ["Drawing", "Rendering Mode"]
+  },
+
+  glActiveTexture: {
+    name: "glActiveTexture",
+    params: [
+      {
+        name: "texture",
+        type: "GLenum",
+        description: "활성화할 텍스처 유닛을 지정합니다. GL_TEXTURE0부터 GL_TEXTURE31까지의 값을 가질 수 있습니다."
+      }
+    ],
+    description: "주어진 텍스처 유닛을 활성화합니다. 이후의 모든 glBindTexture 호출은 현재 활성화된 텍스처 유닛에 영향을 미칩니다. 여러 텍스처를 하나의 그리기 호출에 바인딩할 수 있게 해줍니다.",
+    example: "glActiveTexture(GL_TEXTURE0);\nglBindTexture(GL_TEXTURE_2D, texture1);\nglActiveTexture(GL_TEXTURE1);\nglBindTexture(GL_TEXTURE_2D, texture2);",
+    tags: ["Textures", "Multi-texturing"]
   }
 };

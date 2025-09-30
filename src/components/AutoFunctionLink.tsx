@@ -26,8 +26,30 @@ const AutoFunctionLink: React.FC<AutoFunctionLinkProps> = ({ children, className
     const functionName = match[1];
     const startIndex = match.index;
     
-    // 함수 데이터베이스에 있는 함수인지 확인
-    if (openglFunctions[functionName]) {
+    // 함수 데이터베이스에서 정확한 매치 또는 유사한 함수 찾기
+    let funcData = openglFunctions[functionName];
+    
+    // 정확한 매치가 없으면 유사한 함수 찾기
+    if (!funcData) {
+      // glUniform 계열 함수들 처리 (glUniform1f, glUniform2f, glUniform3f, glUniform1i 등)
+      if (functionName.startsWith('glUniform') && /^glUniform[1-4][fi]v?$/.test(functionName)) {
+        funcData = openglFunctions['glUniform'];
+      }
+      // glVertexAttrib 계열 함수들 처리
+      else if (functionName.startsWith('glVertexAttrib') && /^glVertexAttrib[1-4][fd]v?$/.test(functionName)) {
+        funcData = openglFunctions['glVertexAttribPointer'];
+      }
+      // glTexParameter 계열 함수들 처리
+      else if (functionName.startsWith('glTexParameter') && /^glTexParameter[if]v?$/.test(functionName)) {
+        funcData = openglFunctions['glTexParameteri'] || openglFunctions['glTexParameterfv'];
+      }
+      // glGet 계열 함수들 처리
+      else if (functionName.startsWith('glGet') && /^glGet(Integer|Float|Double|Boolean)v?$/.test(functionName)) {
+        funcData = openglFunctions['glGetIntegerv'];
+      }
+    }
+    
+    if (funcData) {
       hasFunction = true;
       
       // 매치 이전 텍스트 추가
@@ -35,12 +57,11 @@ const AutoFunctionLink: React.FC<AutoFunctionLinkProps> = ({ children, className
         parts.push(children.slice(lastIndex, startIndex));
       }
       
-      // 실제 FunctionDoc 컴포넌트 추가
-      const funcData = openglFunctions[functionName];
+      // 실제 FunctionDoc 컴포넌트 추가 (실제 함수명은 유지하되 설명은 대표 함수 사용)
       parts.push(
         <FunctionDoc
           key={`${functionName}-${startIndex}`}
-          name={funcData.name}
+          name={functionName}  // 실제 함수명 표시
           params={funcData.params}
           description={funcData.description}
           example={funcData.example}
