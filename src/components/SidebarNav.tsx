@@ -24,7 +24,7 @@ const Sidebar = styled.nav<{ isOpen?: boolean; theme: any }>`
     top: 0;
     height: 100vh;
     transform: translateX(${props => props.isOpen ? '0' : '-100%'});
-    transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.25s, background 0.25s;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease, background 0.2s ease;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 2px 0 16px 0 rgba(80, 120, 200, 0.13);
     width: 80vw;
     min-width: 220px;
