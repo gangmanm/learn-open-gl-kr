@@ -153,6 +153,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
           borderRadius: '8px',
           boxShadow: `0 4px 12px rgba(0,0,0,0.1)`,
           border: `1px solid ${theme.colors.border}`,
+          background: theme.mode === 'dark' ? '#ffffff' : undefined,
           ...props.style
         }}
       />
