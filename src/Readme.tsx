@@ -61,6 +61,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     'hellotriangle',
     'shaders',
     'textures',
+    'transformations',
   ];
 
   const SLUG_TO_LABEL: Record<string, string> = {
@@ -71,6 +72,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     hellotriangle: 'Hello Triangle',
     shaders: 'Shaders',
     textures: 'Textures',
+    transformations: 'Transformations',
   };
 
   // 파일명 <-> 해시 슬러그 매핑 (App의 DOC_MAP과 역매핑)
@@ -82,6 +84,7 @@ const Readme: React.FC<ReadmeProps> = ({ doc = 'main' }) => {
     HelloTriangle: 'hellotriangle',
     Shaders: 'shaders',
     Textures: 'textures',
+    Transformations: 'transformations',
   };
 
   const currentSlug = FILE_TO_SLUG[doc] || null;
