@@ -1,32 +1,32 @@
 # Transformations
 
-우리는 이제 객체를 만들고, 색을 입히거나 텍스처를 사용해 세밀한 외형을 부여하는 방법을 배웠지만, 
+우리는 이제 객체를 만들고, 색을 입히거나 텍스처를 사용해 세밀한 외형을 부여하는 방법을 배웠지만,
 여전히 그들은 정적인 객체에 불과합니다. 물론 매 프레임마다 정점을 바꾸고 버퍼를 다시 부성하여 움직이게 만들 수도 있겠지만,
-그것은 번거롭고 처리 성능을 많이 소모합니다. 훨씨 더 좋은 방법은 여러 개의 행렬(matrix) 객체를 사용해 변환하는 것입니다. 
-이 말이 무슨 '쿵푸' 나 거대한 디지털 가상 세계에 대해 이야기 하겠다는 의미는 아닙니다. 
+그것은 번거롭고 처리 성능을 많이 소모합니다. 훨씨 더 좋은 방법은 여러 개의 행렬(matrix) 객체를 사용해 변환하는 것입니다.
+이 말이 무슨 '쿵푸' 나 거대한 디지털 가상 세계에 대해 이야기 하겠다는 의미는 아닙니다.
 
-행렬은 처음엔 복잡하고 어렵게 느껴질 수 있지만, 익숙해지고 나면 매우 강력하고 유용한 수학적 도구입니다. 행렬에 대해 
-이야기 하려면 약간의 수학적 배경 지식이 필요하며, 수학에 관심이 많은 독자들을 위해 추가 자료를 참고할 수 있도록 할 것입니다. 
+행렬은 처음엔 복잡하고 어렵게 느껴질 수 있지만, 익숙해지고 나면 매우 강력하고 유용한 수학적 도구입니다. 행렬에 대해
+이야기 하려면 약간의 수학적 배경 지식이 필요하며, 수학에 관심이 많은 독자들을 위해 추가 자료를 참고할 수 있도록 할 것입니다.
 
-하지마 변환(transformations)을 완전히 이해하기 위해서는 먼저 벡터(vector)에 대해 조금 더 깊이 알아야합니다. 
+하지마 변환(transformations)을 완전히 이해하기 위해서는 먼저 벡터(vector)에 대해 조금 더 깊이 알아야합니다.
 이 장의 목표는 이후에 필요하게 될 수학적 배경을 기본적으로 다루는 것입니다. 만약 내용이 어렵게 느껴진다면,
-가능한 이 해하려고 노력하고, 나중에 다시 돌아와 복습하면 됩니다. 
+가능한 이 해하려고 노력하고, 나중에 다시 돌아와 복습하면 됩니다.
 
-# Vectors 벡터 
+# Vectors 벡터
 
-가장 기본적인 정의에서 벡터(vector)는 단순히 방향(<Green>direction</Green>)을 의미합니다. 
-벡터는 방향(<Green>direction</Green>)과 크기(<Green>magnitude</Green>)( 즉 힘(strength) 또는 길이(length))를 가집니다. 
+가장 기본적인 정의에서 벡터(vector)는 단순히 방향(<Green>direction</Green>)을 의미합니다.
+벡터는 방향(<Green>direction</Green>)과 크기(<Green>magnitude</Green>)( 즉 힘(strength) 또는 길이(length))를 가집니다.
 
 보물지도를 떠올려 보면 이해하기 쉽습니다. '왼쪽으로 10걸음 가고, 북쪽으로 3걸음, 그리고 오른쪽으로 5걸은 가라'
 
-이 경우 '왼쪽'은 방향 '10걸음'은 크기를 나타냅니다. 따라서 이 보물지도의 지시에는 세 개의 벡터가 포함되어 있습니다. 
+이 경우 '왼쪽'은 방향 '10걸음'은 크기를 나타냅니다. 따라서 이 보물지도의 지시에는 세 개의 벡터가 포함되어 있습니다.
 
-벡터는 어떤 차원(dimensions)이든 가질 수 있지만, 보통 우리는 2차원부터 4차원 사이의 벡터를 다룹니다. 
-2차원 벡터는 평면 상의 방향을 나타냅니다. (2D 그래프 처럼 생각하면 됩니다.) 3차원 벡터는 3D 공간에서의 어떤 방향이든 표현할 수 있습니다. 
+벡터는 어떤 차원(dimensions)이든 가질 수 있지만, 보통 우리는 2차원부터 4차원 사이의 벡터를 다룹니다.
+2차원 벡터는 평면 상의 방향을 나타냅니다. (2D 그래프 처럼 생각하면 됩니다.) 3차원 벡터는 3D 공간에서의 어떤 방향이든 표현할 수 있습니다.
 
-아래의 2차원 그래프에서 `(x,y)` 로 표시된 세 개의 벡터를 볼 수 있습니다. 
-3차원보다 2차원에서 벡터를 표시하는 것이 더 직관적이기 때문에 2차원 벡터를 `z` 좌표가 `0`인 3차원 벡터로 생각할 ㅅ ㅜ있습니다. 
-벡터는 방향을 나타내므로, 벡터의 원점(시작점)은 그 값에 영향을 주지 않습니다. 
+아래의 2차원 그래프에서 `(x,y)` 로 표시된 세 개의 벡터를 볼 수 있습니다.
+3차원보다 2차원에서 벡터를 표시하는 것이 더 직관적이기 때문에 2차원 벡터를 `z` 좌표가 `0`인 3차원 벡터로 생각할 ㅅ ㅜ있습니다.
+벡터는 방향을 나타내므로, 벡터의 원점(시작점)은 그 값에 영향을 주지 않습니다.
 아래 그래프에서 우리는 원점이 다르더라도 벡터 v̄ 와 w̄ 가 동일하다는 것을 볼 수 있습니다.
 
 ![vectors](./images/getting-started/vectors.png)
@@ -34,67 +34,177 @@
 벡터를 표현할 때, 수학자들은 일반적으로 벡터 기호 위에 작은 막대(bar)를 붙여 v̄ 와 같이 표기하는 것을 선호합니다.
 또한, 수식 안에서 벡터를 표시할 때는 보통 다음과 같은 형태로 나타냅니다:
 
-```math 
+```math
 \bar{v} = \begin{pmatrix} \color{red}x \\ \color{green}y \\ \color{blue}z \end{pmatrix}
 ```
 
-벡터는 방향으로 정의되기 때문에 그것을 위치로 시각화 하기가 어렵습니다. 만약 벡터를 위치로 시각화하고 싶다면 
+벡터는 방향으로 정의되기 때문에 그것을 위치로 시각화 하기가 어렵습니다. 만약 벡터를 위치로 시각화하고 싶다면
 벡터의 시작점을 `(0,0,0)` 으로 두고 어떤 특정한 방향을 향하게 하면 됩니다. 이렇게 하면 그 벡터는 하나의 위치 벡터 (<Green>position vector</Green>)가 됩니다.
 (물론 다른 시작점을 지정할 수 도 있으며, 이 경우에는 '이 벡터는 이 원 점에서 저 점을 향한다' 라고 표현할 수 있습니다.)
 
-예를 들어 , 위치 벡터 `(3,5)` 는 원점 `(0,0)`에서 시작하여 그래프 상의 점 `(3,5)`를 향하게 됩니다. 
-이처럼 벡터를 사용하면 2차원(2D) 과 3차원(3D) 공간에서 방향뿐 아니라 위치까지 표현할 수 있습니다. 
+예를 들어 , 위치 벡터 `(3,5)` 는 원점 `(0,0)`에서 시작하여 그래프 상의 점 `(3,5)`를 향하게 됩니다.
+이처럼 벡터를 사용하면 2차원(2D) 과 3차원(3D) 공간에서 방향뿐 아니라 위치까지 표현할 수 있습니다.
 
-또한 일반 숫자처럼, 벡터에도 여러가지 연산을 정의할 수 있습니다. (그 중 일부는 이미 앞에서 본 적이 있습니다.) 
+또한 일반 숫자처럼, 벡터에도 여러가지 연산을 정의할 수 있습니다. (그 중 일부는 이미 앞에서 본 적이 있습니다.)
 
 ## Scalar vector operations 스칼라 벡터 연산
 
-<Green>스칼라(scalar)</Green>는 하나의 숫자값을 의미합니다. 벡터에 스칼라를 더하거나/빼거나/곱하거나/나눌 때는 단순히 벡터의 
-각 요소에 해당 스칼라 연산을 적용하면 됩니다. 
+<Green>스칼라(scalar)</Green>는 하나의 숫자값을 의미합니다. 벡터에 스칼라를
+더하거나/빼거나/곱하거나/나눌 때는 단순히 벡터의 각 요소에 해당 스칼라 연산을
+적용하면 됩니다.{" "}
 
-예를 들어, 덧셈의 경우 다음과 같이 표현할 수 있습니다. 
+예를 들어, 덧셈의 경우 다음과 같이 표현할 수 있습니다.
 
-```math 
+```math
 \begin{pmatrix} \color{red}1 \\ \color{green}2 \\ \color{blue}3 \end{pmatrix} + x \rightarrow \begin{pmatrix} \color{red}1 \\ \color{green}2 \\ \color{blue}3 \end{pmatrix} + \begin{pmatrix} x \\ x \\ x \end{pmatrix}  = \begin{pmatrix} \color{red}1 + x \\ \color{green}2 + x \\ \color{blue}3 + x \end{pmatrix}
 ```
-여기서 + 는 더하기(+), 빼기(−), 곱하기(⋅), 나누기(÷) 로 대체될 수 있습니다. 
+
+여기서 + 는 더하기(+), 빼기(−), 곱하기(⋅), 나누기(÷) 로 대체될 수 있습니다.
 이때 ⋅ 은 곱셈 연산자(multiplication operator) 를 나타냅니다.
 
 ## Vector negation 벡터 부정
 
-벡터를 부호 반전(negate) 하면, 그 벡터는 정반대 방향을 가리키게 됩니다. 
-예를 들어, 북 동쪽을 향하던 벡터는 부호 반전 후 남서쪽을 향하게 됩니다. 
+벡터를 부호 반전(negate) 하면, 그 벡터는 정반대 방향을 가리키게 됩니다.
+예를 들어, 북 동쪽을 향하던 벡터는 부호 반전 후 남서쪽을 향하게 됩니다.
 
-벡터를 부호 반전 하려면, 각 성분에 음수 부호(-)를 붙이면 됩니다. (혹은 이를 스칼라 값 -1을 곱한 스칼라-벡터 곱셈 (scalar-vector multiplication)으로 표현할 수도 있습니다.) 
+벡터를 부호 반전 하려면, 각 성분에 음수 부호(-)를 붙이면 됩니다. (혹은 이를 스칼라 값 -1을 곱한 스칼라-벡터 곱셈 (scalar-vector multiplication)으로 표현할 수도 있습니다.)
 
-```math 
+```math
 -\bar{v} = -\begin{pmatrix} \color{red}{v_x} \\ \color{blue}{v_y} \\ \color{green}{v_z} \end{pmatrix} = \begin{pmatrix} -\color{red}{v_x} \\ -\color{blue}{v_y} \\ -\color{green}{v_z} \end{pmatrix}
 ```
 
 ## Addition and subtraction of vectors 벡터 덧셈과 뺄셈
 
-두 개의 벡터를 더하는 것은 <Green> 성분별 (component-wise)</Green> 덧셈으로 정의됩니다. 
-즉 한 벡터의 각 성분을 다른 벡터의 동일한 성분과 더하는 방식입니다. 
-다음과 같이 표현 될 수 있습니다. 
+두 개의 벡터를 더하는 것은 <Green> 성분별 (component-wise)</Green> 덧셈으로 정의됩니다.
+즉 한 벡터의 각 성분을 다른 벡터의 동일한 성분과 더하는 방식입니다.
+다음과 같이 표현 될 수 있습니다.
 
-```math 
+```math
 \bar{v} = \begin{pmatrix} \color{red}1 \\ \color{green}2 \\ \color{blue}3 \end{pmatrix}, \bar{k} = \begin{pmatrix} \color{red}4 \\ \color{green}5 \\ \color{blue}6 \end{pmatrix} \rightarrow \bar{v} + \bar{k} = \begin{pmatrix} \color{red}1 + \color{red}4 \\ \color{green}2 + \color{green}5 \\ \color{blue}3 + \color{blue}6 \end{pmatrix} = \begin{pmatrix} \color{red}5 \\ \color{green}7 \\ \color{blue}9 \end{pmatrix}
 ```
-시각적으로 보면 벡터 ` v = (4,2) ` 와 ` k = (1,2)` 의 경우 다음과 같습니다. 두 번째 벡터 k 를 첫 번째 벡터 v 의 끝점에 이어서 놓으면,
+
+시각적으로 보면 벡터 `v = (4,2)` 와 ` k = (1,2)` 의 경우 다음과 같습니다. 두 번째 벡터 k 를 첫 번째 벡터 v 의 끝점에 이어서 놓으면,
 그 끝점이 두 벡터를 더한 결과 벡터의 끝점이 됩니다. (이 방법을 머리 - 꼬리 연결법(head-to-tail method) 이라고 합니다.)
 
 ![vectors_addition](./images/getting-started/vectors_addition.png)
 
-평범한 덧셈과 뻴셈처럼 벡터의 뺄샘도 두 번째 벡터를 부호 반전(negate) 한 뒤 더하는 것과 동일합니다. 
+평범한 덧셈과 뻴셈처럼 벡터의 뺄샘도 두 번째 벡터를 부호 반전(negate) 한 뒤 더하는 것과 동일합니다.
 
-```math 
+```math
 \bar{v} = \begin{pmatrix} \color{red}{1} \\ \color{green}{2} \\ \color{blue}{3} \end{pmatrix}, \bar{k} = \begin{pmatrix} \color{red}{4} \\ \color{green}{5} \\ \color{blue}{6} \end{pmatrix} \rightarrow \bar{v} + -\bar{k} = \begin{pmatrix} \color{red}{1} + (-\color{red}{4}) \\ \color{green}{2} + (-\color{green}{5}) \\ \color{blue}{3} + (-\color{blue}{6}) \end{pmatrix} = \begin{pmatrix} -\color{red}{3} \\ -\color{green}{3} \\ -\color{blue}{3} \end{pmatrix}
 ```
-두 벡터를 서로 빼면, 각 벡터가 가리키는 위치간의 차이를 나타내는 새로운 벡터가 만들어 집니다. 
-이 개념은 두 점 사이의 차이를 나타내는 벡터가 필요할 때 매우 유용하게 사용됩니다. 
+
+두 벡터를 서로 빼면, 각 벡터가 가리키는 위치간의 차이를 나타내는 새로운 벡터가 만들어 집니다.
+이 개념은 두 점 사이의 차이를 나타내는 벡터가 필요할 때 매우 유용하게 사용됩니다.
 
 ![vectors_subtraction](./images/getting-started/vectors_subtraction.png)
 
-## Length 길이 
+## Length 길이
 
-벡터의 길이(length) 또는 크기(magnitude)를 구하기 위해서는 수학 시간에 배운 
+벡터의 길이(length) 또는 크기(magnitude)를 구하기 위해서는 수학 시간에 배운 **피타고라스 정리**
+를 사용합니다.
+벡터의 x,y를 삼각형의 두 변으로 시각화하면, 벡터는 삼각형을 이루게 됩니다.
+
+![vectors_triangle](./images/getting-started/vectors_triangle.png)
+
+두 변의 길이인 `(x,y)`를 알고 있고 기울어진 변인 벡터 v̄ 의 길이를 구하고자 할 때,
+피타고라스 정리를 사용하여 다음과 같이 계산할 수 있습니다:
+
+```math
+||\color{red}{\bar{v}}|| = \sqrt{\color{green}x^2 + \color{blue}y^2}
+```
+
+여기서 ||v̄|| 는 벡터 v̄ 의 길이를 나타냅니다. 이 식은 3차원(3D) 으로도 쉽게
+확장할 수 있으며 단지 식에 z² 항을 추가하면 됩니다.
+
+이 경우, 벡터 (4, 2) 의 길이는 다음과 같습니다:
+
+```math
+||\color{red}{\bar{v}}|| = \sqrt{\color{green}4^2 + \color{blue}2^2} = \sqrt{\color{green}16 + \color{blue}4} = \sqrt{20} = 4.47
+```
+
+정답은 `4.47` 입니다.
+
+벡터에는 <Green>단위 벡터(unit vector)</Green>라고 불리는 특별한 종류의 벡터가 있습니다.
+단위 벡터의 특징은 길이가 정확히 1이라는 점입니다.
+어떤 벡터로부터 단위 벡터 n̂ 를 구하려면,
+그 벡터의 각 성분(component) 을 해당 벡터의 길이로 나누면 됩니다:
+
+```math
+\hat{n} = \frac{\bar{v}}{||\bar{v}||}
+```
+
+이 과정을 벡터의 정규화(normalizing a vector)라고 합니다.
+단위 벡터는 보통 기호 위에 작은‘^’(caret) 기호를 붙여 n̂ 와 같이 표현합니다.
+특히 벡터의 방향만 중요할 때 단위 벡터를 사용하는 것이 편리합니다.
+(벡터의 길이를 바꿔도 단위 벡터의 방향은 변하지 않습니다.)
+
+## Vector-vector multiplication 벡터-벡터 곱셈
+
+두 벡터의 곱셈(multiplication)은 조금 특별한 경우입니다.
+일반적인 곱셈은 시각적 의미가 없기 때문에 벡터에서는 정의되지 않습니다.
+벡터의 곱에는 사용할 수 있는 두가지 연산이 있습니다. 하나는 내적(dot product)이고 `v̄ ⋅ k̄`
+다른 하나는 외적(cross product)이고 `v̄ × k̄` 입니다.
+
+### Dot product 내적
+
+두 벡터의 내적(dot product)은, 각 벡터의 길이(크기)와 그들 사이의 각도(θ, 세타)의
+코사인 값을 곱한 스칼라 값으로 정의됩니다.
+헷갈리시겠지만 이 공식을 봐보세요
+
+```math
+\bar{v} \cdot \bar{k} = ||\bar{v}|| \cdot ||\bar{k}|| \cdot \cos \theta
+```
+
+여기서 두 벡터 사이의 각도는 θ 입니다. 이게 왜 흥비로울까요?
+만약 두 벡터의 v̄ 와 k̄ 가 단위 벡터(unit vector) 라면, 각 벡터의 길이는 1이 되므로
+식이 단순해 집니다.
+
+```math
+\hat{v} \cdot \hat{k} = 1 \cdot 1 \cdot \cos \theta = \cos \theta
+```
+
+이제 내적 (dot product) 은 두 벡터 사이의 각도만을 정의하게 됩니다. .
+기억을 떠올려보면 코사인(cos) 함수는 각도가 90도일 때 0, 각도가 0도일 때 1 이 됩니다.
+이 성질 덕분에 우리는 두 벡터가 서로 수직(orthogonal)인지 혹은 평행(parallel)인지 내적을 통해 아주 쉽게
+판별할 수 있습니다.( 참고로 수직은 두 벡터가 직각을 이루는 관계를 의미합니다)
+
+만약 sin(사인) 이나 cos(코사인) 함수에 대해 더 자세히 알고싶다면
+
+<LinkBlock
+  url="https://www.khanacademy.org/math/trigonometry/basic-trigonometry/basic_trig_ratios/v/basic-trigonometry"
+  text="칸 아카데미"
+/> 의 기초 삼각함수 강의를 참고하세요.
+
+<Info>
+  단위 벡터가 아닌 일반 벡터들 사이의 각도도 계산할 수 있습니다. 하지만 이
+  경우에는 두 벡터의 길이로 결과를 나누어야 최종적으로 **cosθ** 값만 남게됩니다.
+</Info>
+
+그렇다면 내적(dot product)는 실제로 어떻게 계산할까요?
+
+내적은 각 성분을 서로 곱한 뒤 그 결과를 모두 더하는 연산입니다.
+
+다음은 두개의 단위 벡터를 사용한 예시입니다. (두 벡터의 길이가 정확히 1임을 직접 확인할 수 있습니다.)
+
+```math
+\begin{pmatrix} \color{red}{0.6} \\ -\color{green}{0.8} \\ \color{blue}0 \end{pmatrix} \cdot \begin{pmatrix} \color{red}0 \\ \color{green}1 \\ \color{blue}0 \end{pmatrix} = (\color{red}{0.6} * \color{red}0) + (-\color{green}{0.8} * \color{green}1) + (\color{blue}0 * \color{blue}0) = -0.8
+```
+
+이 두 단위 벡터 사이의 각도를 계산하기 위해서는 코사인 함수의 역함수(cos⁻¹) 를 사용합니다.
+이를 계산하면 143.1도가 나옵니다.
+
+즉, 우리는 두 벡터 사이의 각도(angle) 를 구한 것입니다.
+이처럼 내적(dot product) 은 나중에 조명 계산(lighting calculations) 을 수행할 때 매우 유용하게 사용됩니다.
+
+### Cross product 외적
+
+외적(cross product)는 3차원 공간(3D space)에서만 정의되며,
+서로 평행하지 않은 두 벡터(non-parallel vectors)를 입력으로 받아
+두 입력 벡터에 모두 수직인 세번째 벡터를 생성합니다.
+
+만약 입력된 두 벡터가 서로 직교(orthogonal) 하다면, 어ㅚ적의 결과로 세 개의
+서로 직교하는 벡터들이 만들어지게 됩니다.
+이 성질은 이후의 장(chapter)들에서 매우 유용하게 사용됩니다.
+
+아래의 그림은 이것이 3차원 공간에서 어떻게 보이는지를 보여줍니다.
