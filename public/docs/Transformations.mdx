@@ -1,3 +1,100 @@
 # Transformations
 
-우리는 이제 
+우리는 이제 객체를 만들고, 색을 입히거나 텍스처를 사용해 세밀한 외형을 부여하는 방법을 배웠지만, 
+여전히 그들은 정적인 객체에 불과합니다. 물론 매 프레임마다 정점을 바꾸고 버퍼를 다시 부성하여 움직이게 만들 수도 있겠지만,
+그것은 번거롭고 처리 성능을 많이 소모합니다. 훨씨 더 좋은 방법은 여러 개의 행렬(matrix) 객체를 사용해 변환하는 것입니다. 
+이 말이 무슨 '쿵푸' 나 거대한 디지털 가상 세계에 대해 이야기 하겠다는 의미는 아닙니다. 
+
+행렬은 처음엔 복잡하고 어렵게 느껴질 수 있지만, 익숙해지고 나면 매우 강력하고 유용한 수학적 도구입니다. 행렬에 대해 
+이야기 하려면 약간의 수학적 배경 지식이 필요하며, 수학에 관심이 많은 독자들을 위해 추가 자료를 참고할 수 있도록 할 것입니다. 
+
+하지마 변환(transformations)을 완전히 이해하기 위해서는 먼저 벡터(vector)에 대해 조금 더 깊이 알아야합니다. 
+이 장의 목표는 이후에 필요하게 될 수학적 배경을 기본적으로 다루는 것입니다. 만약 내용이 어렵게 느껴진다면,
+가능한 이 해하려고 노력하고, 나중에 다시 돌아와 복습하면 됩니다. 
+
+# Vectors 벡터 
+
+가장 기본적인 정의에서 벡터(vector)는 단순히 방향(<Green>direction</Green>)을 의미합니다. 
+벡터는 방향(<Green>direction</Green>)과 크기(<Green>magnitude</Green>)( 즉 힘(strength) 또는 길이(length))를 가집니다. 
+
+보물지도를 떠올려 보면 이해하기 쉽습니다. '왼쪽으로 10걸음 가고, 북쪽으로 3걸음, 그리고 오른쪽으로 5걸은 가라'
+
+이 경우 '왼쪽'은 방향 '10걸음'은 크기를 나타냅니다. 따라서 이 보물지도의 지시에는 세 개의 벡터가 포함되어 있습니다. 
+
+벡터는 어떤 차원(dimensions)이든 가질 수 있지만, 보통 우리는 2차원부터 4차원 사이의 벡터를 다룹니다. 
+2차원 벡터는 평면 상의 방향을 나타냅니다. (2D 그래프 처럼 생각하면 됩니다.) 3차원 벡터는 3D 공간에서의 어떤 방향이든 표현할 수 있습니다. 
+
+아래의 2차원 그래프에서 `(x,y)` 로 표시된 세 개의 벡터를 볼 수 있습니다. 
+3차원보다 2차원에서 벡터를 표시하는 것이 더 직관적이기 때문에 2차원 벡터를 `z` 좌표가 `0`인 3차원 벡터로 생각할 ㅅ ㅜ있습니다. 
+벡터는 방향을 나타내므로, 벡터의 원점(시작점)은 그 값에 영향을 주지 않습니다. 
+아래 그래프에서 우리는 원점이 다르더라도 벡터 v̄ 와 w̄ 가 동일하다는 것을 볼 수 있습니다.
+
+![vectors](./images/getting-started/vectors.png)
+
+벡터를 표현할 때, 수학자들은 일반적으로 벡터 기호 위에 작은 막대(bar)를 붙여 v̄ 와 같이 표기하는 것을 선호합니다.
+또한, 수식 안에서 벡터를 표시할 때는 보통 다음과 같은 형태로 나타냅니다:
+
+```math 
+\bar{v} = \begin{pmatrix} \color{red}x \\ \color{green}y \\ \color{blue}z \end{pmatrix}
+```
+
+벡터는 방향으로 정의되기 때문에 그것을 위치로 시각화 하기가 어렵습니다. 만약 벡터를 위치로 시각화하고 싶다면 
+벡터의 시작점을 `(0,0,0)` 으로 두고 어떤 특정한 방향을 향하게 하면 됩니다. 이렇게 하면 그 벡터는 하나의 위치 벡터 (<Green>position vector</Green>)가 됩니다.
+(물론 다른 시작점을 지정할 수 도 있으며, 이 경우에는 '이 벡터는 이 원 점에서 저 점을 향한다' 라고 표현할 수 있습니다.)
+
+예를 들어 , 위치 벡터 `(3,5)` 는 원점 `(0,0)`에서 시작하여 그래프 상의 점 `(3,5)`를 향하게 됩니다. 
+이처럼 벡터를 사용하면 2차원(2D) 과 3차원(3D) 공간에서 방향뿐 아니라 위치까지 표현할 수 있습니다. 
+
+또한 일반 숫자처럼, 벡터에도 여러가지 연산을 정의할 수 있습니다. (그 중 일부는 이미 앞에서 본 적이 있습니다.) 
+
+## Scalar vector operations 스칼라 벡터 연산
+
+<Green>스칼라(scalar)</Green>는 하나의 숫자값을 의미합니다. 벡터에 스칼라를 더하거나/빼거나/곱하거나/나눌 때는 단순히 벡터의 
+각 요소에 해당 스칼라 연산ㅇ르 적용하면 됩니다. 
+
+예를 들어, 덧셈의 경우 다음과 같이 표현할 수 있습니다. 
+
+```math 
+\begin{pmatrix} \color{red}1 \\ \color{green}2 \\ \color{blue}3 \end{pmatrix} + x \rightarrow \begin{pmatrix} \color{red}1 \\ \color{green}2 \\ \color{blue}3 \end{pmatrix} + \begin{pmatrix} x \\ x \\ x \end{pmatrix}  = \begin{pmatrix} \color{red}1 + x \\ \color{green}2 + x \\ \color{blue}3 + x \end{pmatrix}
+```
+여기서 + 는 더하기(+), 빼기(−), 곱하기(⋅), 나누기(÷) 로 대체될 수 있습니다. 
+이때 ⋅ 은 곱셈 연산자(multiplication operator) 를 나타냅니다.
+
+## Vector negation 벡터 부정
+
+벡터를 부호 반전(negate) 하면, 그 벡터는 정반대 방향을 가리키게 됩니다. 
+예를 들어, 북 동쪽을 향하던 벡터는 부호 반전 후 남서쪽을 향하게 됩니다. 
+
+벡터를 부호 반전 하려면, 각 성분에 음수 부호(-)를 붙이면 됩니다. (혹은 이를 스칼라 값 -1을 곱한 스칼라-벡터 곱셈 (scalar-vector multiplication)으로 표현할 수도 있습니다.) 
+
+```math 
+-\bar{v} = -\begin{pmatrix} \color{red}{v_x} \\ \color{blue}{v_y} \\ \color{green}{v_z} \end{pmatrix} = \begin{pmatrix} -\color{red}{v_x} \\ -\color{blue}{v_y} \\ -\color{green}{v_z} \end{pmatrix}
+```
+
+## Addition and subtraction of vectors 벡터 덧셈과 뺄셈
+
+두 개의 벡터를 더하는 것은 <Green> 성분별 (component-wise)</Green> 덧셈으로 정의됩니다. 
+즉 한 벡터의 각 성분을 다른 벡터의 동일한 성분과 더하는 방식입니다. 
+다음과 같이 표현 될 수 있습니다. 
+
+```math 
+\bar{v} = \begin{pmatrix} \color{red}1 \\ \color{green}2 \\ \color{blue}3 \end{pmatrix}, \bar{k} = \begin{pmatrix} \color{red}4 \\ \color{green}5 \\ \color{blue}6 \end{pmatrix} \rightarrow \bar{v} + \bar{k} = \begin{pmatrix} \color{red}1 + \color{red}4 \\ \color{green}2 + \color{green}5 \\ \color{blue}3 + \color{blue}6 \end{pmatrix} = \begin{pmatrix} \color{red}5 \\ \color{green}7 \\ \color{blue}9 \end{pmatrix}
+```
+시각적으로 보면 벡터 ` v = (4,2) ` 와 ` k = (1,2)` 의 경우 다음과 같습니다. 두 번째 벡터 k 를 첫 번째 벡터 v 의 끝점에 이어서 놓으면,
+그 끝점이 두 벡터를 더한 결과 벡터의 끝점이 됩니다. (이 방법을 머리 - 꼬리 연결법(head-to-tail method) 이라고 합니다.)
+
+![vectors_addition](./images/vectors_addition.png)
+
+평범한 덧셈과 뻴셈처럼 벡터의 뺄샘도 두 번째 벡터를 부호 반전(negate) 한 뒤 더하는 것과 동일합니다. 
+
+```math 
+\bar{v} = \begin{pmatrix} \color{red}{1} \\ \color{green}{2} \\ \color{blue}{3} \end{pmatrix}, \bar{k} = \begin{pmatrix} \color{red}{4} \\ \color{green}{5} \\ \color{blue}{6} \end{pmatrix} \rightarrow \bar{v} + -\bar{k} = \begin{pmatrix} \color{red}{1} + (-\color{red}{4}) \\ \color{green}{2} + (-\color{green}{5}) \\ \color{blue}{3} + (-\color{blue}{6}) \end{pmatrix} = \begin{pmatrix} -\color{red}{3} \\ -\color{green}{3} \\ -\color{blue}{3} \end{pmatrix}
+```
+두 벡터를 서로 빼면, 각 벡터가 가리키는 위치간의 차이를 나타내는 새로운 벡터가 만들어 집니다. 
+이 개념은 두 점 사이의 차이를 나타내는 벡터가 필요할 때 매우 유용하게 사용됩니다. 
+
+![vectors_subtraction](./images/vectors_subtraction.png)
+
+## Length 길이 
+
+벡터의 길이(length) 또는 크기(magnitude)를 구하기 위해서는 수학 시간에 배운 
